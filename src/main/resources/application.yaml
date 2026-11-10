@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: microservicio-plazoleta
+
+  profiles:
+    default: desarrollo
+
+server:
+  port: 8082
