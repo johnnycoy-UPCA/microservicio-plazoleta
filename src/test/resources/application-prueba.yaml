@@ -15,3 +15,11 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+
+servicios:
+  usuarios:
+    url-base: http://localhost:8081
+
+seguridad:
+  jwt:
+    secreto: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
