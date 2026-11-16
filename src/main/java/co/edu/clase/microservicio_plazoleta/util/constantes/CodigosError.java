@@ -7,6 +7,14 @@ public final class CodigosError {
     public static final String PROPIETARIO_NO_ENCONTRADO = "RST-003";
     public static final String USUARIO_NO_ES_PROPIETARIO = "RST-004";
     public static final String SERVICIO_USUARIOS_NO_DISPONIBLE = "RST-005";
+    public static final String RESTAURANTE_NO_ENCONTRADO = "RST-006";
+    public static final String RESTAURANTE_INACTIVO = "RST-007";
+    public static final String RESTAURANTE_NO_PERTENECE_PROPIETARIO = "RST-008";
+
+    public static final String CATEGORIA_NO_ENCONTRADA = "CAT-001";
+    public static final String CATEGORIA_INACTIVA = "CAT-002";
+
+    public static final String PRECIO_PLATO_INVALIDO = "PLT-001";
 
     public static final String SOLICITUD_INVALIDA = "VAL-001";
     public static final String CUERPO_SOLICITUD_INVALIDO = "VAL-002";

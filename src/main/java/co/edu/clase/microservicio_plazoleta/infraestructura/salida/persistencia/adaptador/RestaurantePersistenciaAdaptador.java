@@ -5,6 +5,9 @@ import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaP
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.entidad.RestauranteEntidad;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.mapeador.RestaurantePersistenciaMapeador;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.repositorio.RestauranteJpaRepositorio;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +22,12 @@ public class RestaurantePersistenciaAdaptador
             restaurantePersistenciaMapeador;
 
     public RestaurantePersistenciaAdaptador(
-            RestauranteJpaRepositorio
-                    restauranteJpaRepositorio,
-            RestaurantePersistenciaMapeador
-                    restaurantePersistenciaMapeador) {
+            RestauranteJpaRepositorio restauranteJpaRepositorio,
+            RestaurantePersistenciaMapeador restaurantePersistenciaMapeador) {
 
-        this.restauranteJpaRepositorio =
-                restauranteJpaRepositorio;
+        this.restauranteJpaRepositorio = restauranteJpaRepositorio;
 
-        this.restaurantePersistenciaMapeador =
-                restaurantePersistenciaMapeador;
+        this.restaurantePersistenciaMapeador = restaurantePersistenciaMapeador;
     }
 
     @Override
@@ -37,21 +36,33 @@ public class RestaurantePersistenciaAdaptador
         return restauranteJpaRepositorio.existsByNit(nit);
     }
 
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<Restaurante> buscarPorId(
+			Long restauranteId) {
+
+		return restauranteJpaRepositorio
+				.findById(restauranteId)
+				.map(
+					restaurantePersistenciaMapeador::aModelo
+				);
+	}
+
     @Override
     @Transactional
     public Restaurante guardar(
             Restaurante restaurante) {
 
         RestauranteEntidad entidad =
-                restaurantePersistenciaMapeador.aEntidad(
-                        restaurante
-                );
+			restaurantePersistenciaMapeador.aEntidad(
+				restaurante
+			);
 
         RestauranteEntidad entidadGuardada =
-                restauranteJpaRepositorio.save(entidad);
+			restauranteJpaRepositorio.save(entidad);
 
         return restaurantePersistenciaMapeador.aModelo(
-                entidadGuardada
+			entidadGuardada
         );
     }
 }

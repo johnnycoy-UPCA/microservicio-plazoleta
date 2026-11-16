@@ -24,25 +24,25 @@ class RestaurantePersistenciaAdaptadorTest {
 
     @Mock
     private RestauranteJpaRepositorio
-            restauranteJpaRepositorio;
+		restauranteJpaRepositorio;
 
     @Spy
     private RestaurantePersistenciaMapeador
-            restaurantePersistenciaMapeador;
+		restaurantePersistenciaMapeador;
 
     @InjectMocks
     private RestaurantePersistenciaAdaptador
-            restaurantePersistenciaAdaptador;
+		restaurantePersistenciaAdaptador;
 
     @Test
     void debeDetectarNitRegistrado() {
         when(restauranteJpaRepositorio.existsByNit(
-                "900123456"
+			"900123456"
         )).thenReturn(true);
 
         boolean resultado =
-                restaurantePersistenciaAdaptador
-                        .existePorNit("900123456");
+			restaurantePersistenciaAdaptador
+				.existePorNit("900123456");
 
         assertTrue(resultado);
     }
@@ -50,12 +50,12 @@ class RestaurantePersistenciaAdaptadorTest {
     @Test
     void debeDetectarNitNoRegistrado() {
         when(restauranteJpaRepositorio.existsByNit(
-                "900999999"
+			"900999999"
         )).thenReturn(false);
 
         boolean resultado =
-                restaurantePersistenciaAdaptador
-                        .existePorNit("900999999");
+			restaurantePersistenciaAdaptador
+				.existePorNit("900999999");
 
         assertFalse(resultado);
     }
@@ -65,25 +65,25 @@ class RestaurantePersistenciaAdaptadorTest {
         Restaurante restaurante = crearRestaurante();
 
         RestauranteEntidad entidadGuardada =
-                crearEntidadGuardada();
+			crearEntidadGuardada();
 
         when(restauranteJpaRepositorio.save(
-                any(RestauranteEntidad.class)
+			any(RestauranteEntidad.class)
         )).thenReturn(entidadGuardada);
 
         Restaurante resultado =
-                restaurantePersistenciaAdaptador.guardar(
-                        restaurante
-                );
+			restaurantePersistenciaAdaptador.guardar(
+				restaurante
+			);
 
         assertEquals(1L, resultado.getId());
         assertEquals(
-                "Restaurante Caribe",
-                resultado.getNombre()
+			"Restaurante Caribe",
+			resultado.getNombre()
         );
         assertEquals(
-                "900123456",
-                resultado.getNit()
+			"900123456",
+			resultado.getNit()
         );
         assertTrue(resultado.getActivo());
     }
@@ -96,19 +96,19 @@ class RestaurantePersistenciaAdaptadorTest {
         restaurante.setDireccion("Calle 72 # 45-10");
         restaurante.setCelular("+573001234567");
         restaurante.setUrlLogo(
-                "https://ejemplo.com/logo.png"
+			"https://ejemplo.com/logo.png"
         );
         restaurante.setPropietarioId(10L);
         restaurante.setActivo(Boolean.TRUE);
         restaurante.setFechaCreacion(
-                LocalDateTime.of(
-                        2026, 11, 10, 13, 0
-                )
+			LocalDateTime.of(
+				2026, 11, 10, 13, 0
+			)
         );
         restaurante.setFechaActualizacion(
-                LocalDateTime.of(
-                        2026, 11, 10, 13, 0
-                )
+			LocalDateTime.of(
+				2026, 11, 10, 13, 0
+			)
         );
 
         return restaurante;
@@ -116,7 +116,7 @@ class RestaurantePersistenciaAdaptadorTest {
 
     private RestauranteEntidad crearEntidadGuardada() {
         RestauranteEntidad entidad =
-                new RestauranteEntidad();
+			new RestauranteEntidad();
 
         entidad.setId(1L);
         entidad.setNombre("Restaurante Caribe");
@@ -124,19 +124,19 @@ class RestaurantePersistenciaAdaptadorTest {
         entidad.setDireccion("Calle 72 # 45-10");
         entidad.setCelular("+573001234567");
         entidad.setUrlLogo(
-                "https://ejemplo.com/logo.png"
+			"https://ejemplo.com/logo.png"
         );
         entidad.setPropietarioId(10L);
         entidad.setActivo(Boolean.TRUE);
         entidad.setFechaCreacion(
-                LocalDateTime.of(
-                        2026, 11, 10, 13, 0
-                )
+			LocalDateTime.of(
+				2026, 11, 10, 13, 0
+			)
         );
         entidad.setFechaActualizacion(
-                LocalDateTime.of(
-                        2026, 11, 10, 13, 0
-                )
+			LocalDateTime.of(
+				2026, 11, 10, 13, 0
+			)
         );
 
         return entidad;
