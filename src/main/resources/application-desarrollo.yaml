@@ -22,3 +22,11 @@ spring:
       path: /h2-console
       settings:
         web-allow-others: false
+
+servicios:
+  usuarios:
+    url-base: ${USUARIOS_URL_BASE:http://localhost:8081}
+
+seguridad:
+  jwt:
+    secreto: ${JWT_SECRETO}
