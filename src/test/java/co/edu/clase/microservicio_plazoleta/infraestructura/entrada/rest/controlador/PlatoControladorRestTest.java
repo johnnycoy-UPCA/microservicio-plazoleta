@@ -2,7 +2,9 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.contro
 
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PlatoRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearPlatoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.ModificarPlatoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearPlatoHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ModificarPlatoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
@@ -38,12 +40,15 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ExtendWith(MockitoExtension.class)
 class PlatoControladorRestTest {
 
     @Mock
     private CrearPlatoHandler crearPlatoHandler;
+	@Mock
+	private ModificarPlatoHandler modificarPlatoHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -52,7 +57,8 @@ class PlatoControladorRestTest {
     void configurar() {
         PlatoControladorRest controlador =
                 new PlatoControladorRest(
-					crearPlatoHandler
+					crearPlatoHandler,
+					modificarPlatoHandler
                 );
 
         LocalValidatorFactoryBean validador =
@@ -138,6 +144,73 @@ class PlatoControladorRestTest {
                 .andExpect(jsonPath("$.detalles.precio")
 					.exists());
     }
+
+	@Test
+	void debeModificarPlatoYResponderCorrectamente()
+			throws Exception {
+
+		ModificarPlatoSolicitudDto solicitud =
+				new ModificarPlatoSolicitudDto();
+
+		solicitud.setPrecio(32000);
+		solicitud.setDescripcion("Arroz con pollo, vegetales y ensalada");
+
+		PlatoRespuestaDto respuesta = crearRespuesta();
+		respuesta.setPrecio(32000);
+		respuesta.setDescripcion("Arroz con pollo, vegetales y ensalada");
+
+		when(modificarPlatoHandler.ejecutar(
+				eq(1L),
+				any(ModificarPlatoSolicitudDto.class),
+				eq(10L)
+		)).thenReturn(respuesta);
+
+		mockMvc.perform(put(ConstantesApi.API_PLATOS + "/{platoId}", 1L)
+					.with(autenticacionPropietario())
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(solicitud))
+				)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(1))
+				.andExpect(jsonPath("$.precio")
+						.value(32000))
+				.andExpect(jsonPath("$.descripcion")
+						.value("Arroz con pollo, vegetales y ensalada"))
+				.andExpect(jsonPath("$.nombre")
+						.value("Arroz con pollo"))
+				.andExpect(jsonPath("$.categoriaId")
+						.value(2))
+				.andExpect(jsonPath("$.restauranteId")
+						.value(1));
+
+		verify(modificarPlatoHandler).ejecutar(
+				eq(1L),
+				any(ModificarPlatoSolicitudDto.class),
+				eq(10L)
+		);
+	}
+
+	@Test
+	void debeRechazarModificacionConDescripcionVacia()
+			throws Exception {
+
+		ModificarPlatoSolicitudDto solicitud =
+				new ModificarPlatoSolicitudDto();
+
+		solicitud.setPrecio(32000);
+		solicitud.setDescripcion("");
+
+		mockMvc.perform(put(ConstantesApi.API_PLATOS + "/{platoId}", 1L)
+						.with(autenticacionPropietario())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(solicitud))
+					)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.codigo")
+						.value("VAL-001"))
+				.andExpect(jsonPath("$.detalles.descripcion")
+						.exists());
+	}
 
     private RequestPostProcessor
             autenticacionPropietario() {

@@ -118,6 +118,9 @@ public final class MensajesError {
 
 	public static final String RESTAURANTE_OBLIGATORIO =
 			"El identificador del restaurante es obligatorio";
+
+	public static final String PLATO_NO_ENCONTRADO =
+			"El plato solicitado no fue encontrado";
 			
     private MensajesError() {
         throw new IllegalStateException(
