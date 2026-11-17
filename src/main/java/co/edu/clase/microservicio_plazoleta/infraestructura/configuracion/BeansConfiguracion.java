@@ -1,7 +1,11 @@
 package co.edu.clase.microservicio_plazoleta.infraestructura.configuracion;
 
+import co.edu.clase.microservicio_plazoleta.dominio.api.CrearPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearRestauranteServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
 import org.springframework.context.annotation.Bean;
@@ -21,27 +25,46 @@ public class BeansConfiguracion {
     @Bean
     public RestClient clienteUsuarios(
         //     RestClient.Builder constructor,
-            UsuariosServicioPropiedades propiedades) {
+		UsuariosServicioPropiedades propiedades) {
 
         // return constructor
         return RestClient.builder()
-                .baseUrl(propiedades.getUrlBase())
-                .build();
+			.baseUrl(propiedades.getUrlBase())
+			.build();
     }
 
     @Bean
     public CrearRestauranteServicioPuerto
             crearRestauranteServicioPuerto(
-                    RestaurantePersistenciaPuerto
-                            restaurantePersistenciaPuerto,
-                    PropietarioConsultaPuerto
-                            propietarioConsultaPuerto,
-                    Clock relojAplicacion) {
+				RestaurantePersistenciaPuerto
+					restaurantePersistenciaPuerto,
+				PropietarioConsultaPuerto
+					propietarioConsultaPuerto,
+				Clock relojAplicacion) {
 
         return new CrearRestauranteCasoUso(
-                restaurantePersistenciaPuerto,
-                propietarioConsultaPuerto,
-                relojAplicacion
+			restaurantePersistenciaPuerto,
+			propietarioConsultaPuerto,
+			relojAplicacion
         );
     }
+
+	@Bean
+	public CrearPlatoServicioPuerto
+			crearPlatoServicioPuerto(
+				PlatoPersistenciaPuerto
+					platoPersistenciaPuerto,
+				RestaurantePersistenciaPuerto
+					restaurantePersistenciaPuerto,
+				CategoriaPersistenciaPuerto
+					categoriaPersistenciaPuerto,
+				Clock relojAplicacion) {
+
+		return new CrearPlatoCasoUso(
+			platoPersistenciaPuerto,
+			restaurantePersistenciaPuerto,
+			categoriaPersistenciaPuerto,
+			relojAplicacion
+		);
+	}
 }

@@ -41,9 +41,13 @@ public class SeguridadDesarrolloConfiguracion {
 					ConstantesApi.API_RESTAURANTES
 				)
 				.hasRole(
-					PerfilUsuario
-						.ADMINISTRADOR
-						.name()
+					PerfilUsuario.ADMINISTRADOR.name()
+				)
+				.requestMatchers(
+					ConstantesApi.API_PLATOS
+				)
+				.hasRole(
+					PerfilUsuario.PROPIETARIO.name()
 				)
 				.anyRequest()
 				.authenticated()
@@ -51,7 +55,8 @@ public class SeguridadDesarrolloConfiguracion {
 			.csrf(csrf -> csrf
 				.ignoringRequestMatchers(
 					"/h2-console/**",
-					ConstantesApi.API_RESTAURANTES
+					ConstantesApi.API_RESTAURANTES,
+					ConstantesApi.API_PLATOS
 				)
 			)
 			.headers(encabezados -> encabezados
