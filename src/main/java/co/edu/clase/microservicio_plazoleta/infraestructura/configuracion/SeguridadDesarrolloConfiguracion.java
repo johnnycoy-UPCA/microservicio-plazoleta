@@ -3,6 +3,7 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.configuracion;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,10 +39,18 @@ public class SeguridadDesarrolloConfiguracion {
 				)
 				.permitAll()
 				.requestMatchers(
+					HttpMethod.POST,
 					ConstantesApi.API_RESTAURANTES
 				)
 				.hasRole(
 					PerfilUsuario.ADMINISTRADOR.name()
+				)
+				.requestMatchers(
+					HttpMethod.GET,
+					ConstantesApi.API_RESTAURANTES
+				)
+				.hasRole(
+					PerfilUsuario.CLIENTE.name()
 				)
 				.requestMatchers(
 					ConstantesApi.API_PLATOS

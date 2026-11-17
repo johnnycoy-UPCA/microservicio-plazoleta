@@ -10,6 +10,11 @@ public final class ConstantesValidacion {
 	public static final int LONGITUD_MAXIMA_NOMBRE_PLATO = 100;
 	public static final int LONGITUD_MAXIMA_DESCRIPCION_PLATO = 300;
 	public static final int LONGITUD_MAXIMA_URL_IMAGEN = 500;
+    public static final int PAGINA_INICIAL = 0;
+    public static final int TAMANO_PAGINA_PREDETERMINADO = 10;
+    public static final int TAMANO_PAGINA_MINIMO = 1;
+    public static final int TAMANO_PAGINA_MAXIMO = 100;
+    
     public static final String EXPRESION_NIT = "^[0-9]+$";
     public static final String EXPRESION_CELULAR = "^\\+?[0-9]{1,12}$";
     public static final String EXPRESION_NOMBRE_SOLO_NUMEROS = "^[0-9]+$";

@@ -2,8 +2,10 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.configuracion;
 
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearRestauranteServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.ListarRestaurantesServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
@@ -65,6 +67,17 @@ public class BeansConfiguracion {
 			restaurantePersistenciaPuerto,
 			categoriaPersistenciaPuerto,
 			relojAplicacion
+		);
+	}
+
+	@Bean
+	public ListarRestaurantesServicioPuerto
+			listarRestaurantesServicioPuerto(
+					RestaurantePersistenciaPuerto
+						restaurantePersistenciaPuerto) {
+
+		return new ListarRestaurantesCasoUso(
+			restaurantePersistenciaPuerto
 		);
 	}
 }

@@ -3,6 +3,7 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.contro
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.RestauranteRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearRestauranteSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearRestauranteHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarRestaurantesHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,8 +30,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RestauranteControladorRestTest {
 
     @Mock
-    private CrearRestauranteHandler
-            crearRestauranteHandler;
+    private CrearRestauranteHandler crearRestauranteHandler;
+    @Mock
+	private ListarRestaurantesHandler listarRestaurantesHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -39,7 +41,8 @@ class RestauranteControladorRestTest {
     void configurar() {
         RestauranteControladorRest controlador =
                 new RestauranteControladorRest(
-                        crearRestauranteHandler
+                        crearRestauranteHandler,
+						listarRestaurantesHandler
                 );
 
         LocalValidatorFactoryBean validador =
