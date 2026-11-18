@@ -15,6 +15,8 @@ public final class CodigosError {
     public static final String CATEGORIA_INACTIVA = "CAT-002";
 
     public static final String PRECIO_PLATO_INVALIDO = "PLT-001";
+    public static final String PLATO_NO_ENCONTRADO = "PLT-002";
+    public static final String ESTADO_PLATO_OBLIGATORIO = "PLT-003";
 
     public static final String SOLICITUD_INVALIDA = "VAL-001";
     public static final String CUERPO_SOLICITUD_INVALIDO = "VAL-002";
