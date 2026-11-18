@@ -59,6 +59,13 @@ public class SeguridadDesarrolloConfiguracion {
 					PerfilUsuario.PROPIETARIO.name()
 				)
 				.requestMatchers(
+						HttpMethod.GET,
+						ConstantesApi.API_RESTAURANTES + "/*/validacion-propietario"
+				)
+				.hasRole(
+						PerfilUsuario.PROPIETARIO.name()
+				)
+				.requestMatchers(
 					HttpMethod.GET,
 					ConstantesApi.API_RESTAURANTES + "/**"
 				)

@@ -10,10 +10,12 @@ import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCaso
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPlatosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ModificarPlatoServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.ValidarRestaurantePropietarioServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CambiarEstadoPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ModificarPlatoCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.ValidarRestaurantePropietarioCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
@@ -132,6 +134,17 @@ public class BeansConfiguracion {
 			platoPersistenciaPuerto,
 			restaurantePersistenciaPuerto,
 			relojAplicacion
+		);
+	}
+
+	@Bean
+	public ValidarRestaurantePropietarioServicioPuerto
+			validarRestaurantePropietarioServicioPuerto(
+					RestaurantePersistenciaPuerto
+							restaurantePersistenciaPuerto) {
+
+		return new ValidarRestaurantePropietarioCasoUso(
+				restaurantePersistenciaPuerto
 		);
 	}
 }
