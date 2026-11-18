@@ -28,6 +28,9 @@ public final class CodigosError {
     public static final String TOKEN_INVALIDO = "SEG-003";
     public static final String TOKEN_EXPIRADO = "SEG-004";
 
+    public static final String PAGINA_INVALIDA = "PAG-001";
+    public static final String TAMANO_PAGINA_INVALIDO = "PAG-002";
+
     private CodigosError() {
         throw new IllegalStateException(
                 "No se permite crear instancias de una clase de constantes"

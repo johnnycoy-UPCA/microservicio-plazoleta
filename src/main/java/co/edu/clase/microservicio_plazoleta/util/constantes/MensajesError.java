@@ -119,6 +119,12 @@ public final class MensajesError {
 	public static final String RESTAURANTE_OBLIGATORIO =
 			"El identificador del restaurante es obligatorio";
 
+	public static final String PAGINA_INVALIDA =
+			"El número de página no puede ser negativo";
+
+	public static final String TAMANO_PAGINA_INVALIDO =
+			"El tamaño de página debe estar entre 1 y 100";
+
 	public static final String PLATO_NO_ENCONTRADO =
 			"El plato solicitado no fue encontrado";
 
