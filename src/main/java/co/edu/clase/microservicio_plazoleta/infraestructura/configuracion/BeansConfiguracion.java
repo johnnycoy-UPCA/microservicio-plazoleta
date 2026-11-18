@@ -1,5 +1,6 @@
 package co.edu.clase.microservicio_plazoleta.infraestructura.configuracion;
 
+import co.edu.clase.microservicio_plazoleta.dominio.api.CambiarEstadoPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearRestauranteServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ListarPlatosServicioPuerto;
@@ -8,6 +9,11 @@ import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPlatosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.api.ModificarPlatoServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.CambiarEstadoPlatoCasoUso;
+// import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
+// import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.ModificarPlatoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
@@ -94,6 +100,38 @@ public class BeansConfiguracion {
 		return new ListarPlatosCasoUso(
 			platoPersistenciaPuerto,
 			restaurantePersistenciaPuerto
+		);
+	}
+
+	@Bean
+	public ModificarPlatoServicioPuerto
+			modificarPlatoServicioPuerto(
+					PlatoPersistenciaPuerto
+						platoPersistenciaPuerto,
+					RestaurantePersistenciaPuerto
+						restaurantePersistenciaPuerto,
+					Clock relojAplicacion) {
+
+		return new ModificarPlatoCasoUso(
+			platoPersistenciaPuerto,
+			restaurantePersistenciaPuerto,
+			relojAplicacion
+		);
+	}
+
+	@Bean
+	public CambiarEstadoPlatoServicioPuerto
+			cambiarEstadoPlatoServicioPuerto(
+					PlatoPersistenciaPuerto
+						platoPersistenciaPuerto,
+					RestaurantePersistenciaPuerto
+						restaurantePersistenciaPuerto,
+					Clock relojAplicacion) {
+
+		return new CambiarEstadoPlatoCasoUso(
+			platoPersistenciaPuerto,
+			restaurantePersistenciaPuerto,
+			relojAplicacion
 		);
 	}
 }

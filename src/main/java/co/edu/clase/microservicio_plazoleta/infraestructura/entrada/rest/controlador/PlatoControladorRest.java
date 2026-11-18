@@ -1,8 +1,12 @@
 package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.controlador;
 
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PlatoRespuestaDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CambiarEstadoPlatoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearPlatoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.ModificarPlatoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CambiarEstadoPlatoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearPlatoHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ModificarPlatoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,61 +18,68 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(
-        name = "Platos",
-        description = "Operaciones para gestionar platos"
+	name = "Platos",
+	description = "Operaciones para gestionar platos"
 )
 @RestController
 @RequestMapping(ConstantesApi.API_PLATOS)
 public class PlatoControladorRest {
 
     private final CrearPlatoHandler crearPlatoHandler;
+    private final ModificarPlatoHandler modificarPlatoHandler;
+	private final CambiarEstadoPlatoHandler cambiarEstadoPlatoHandler;
 
     public PlatoControladorRest(
-            CrearPlatoHandler crearPlatoHandler) {
+            CrearPlatoHandler crearPlatoHandler,
+            ModificarPlatoHandler modificarPlatoHandler,
+            CambiarEstadoPlatoHandler cambiarEstadoPlatoHandler) {
 
         this.crearPlatoHandler = crearPlatoHandler;
+        this.modificarPlatoHandler = modificarPlatoHandler;
+        this.cambiarEstadoPlatoHandler = cambiarEstadoPlatoHandler;
     }
 
     @Operation(
-            summary = "Crear plato",
-            description =
-                    "Crea un plato en un restaurante perteneciente "
-                            + "al propietario autenticado"
+		summary = "Crear plato",
+		description =
+			"Crea un plato en un restaurante perteneciente "
+			+ "al propietario autenticado"
     )
     @SecurityRequirement(name = "autenticacionBearer")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Plato creado correctamente"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Datos, precio o restaurante inválido"
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "Token ausente, inválido o expirado"
-            ),
-            @ApiResponse(
-                    responseCode = "403",
-                    description =
-                            "Perfil sin autorización o restaurante ajeno"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description =
-                            "Restaurante o categoría no encontrado"
-            ),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "Error interno del microservicio"
-            )
+		@ApiResponse(
+			responseCode = "201",
+			description = "Plato creado correctamente"
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Datos, precio o restaurante inválido"
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "Token ausente, inválido o expirado"
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "Perfil sin autorización o restaurante ajeno"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Restaurante o categoría no encontrado"
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "Error interno del microservicio"
+		)
     })
     @PostMapping
     public ResponseEntity<PlatoRespuestaDto> crearPlato(
@@ -84,7 +95,110 @@ public class PlatoControladorRest {
                 );
 
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(respuesta);
+			.status(HttpStatus.CREATED)
+			.body(respuesta);
     }
+
+	@Operation(
+		summary = "Modificar plato",
+		description =
+			"Modifica únicamente el precio y la descripción "
+			+ "de un plato perteneciente a un restaurante "
+			+ "del propietario autenticado"
+	)
+	@SecurityRequirement(name = "autenticacionBearer")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "Plato modificado correctamente"
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Precio o descripción inválidos"
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "Token ausente, inválido o expirado"
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "Perfil sin autorización o restaurante ajeno"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Plato o restaurante no encontrado"
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "Error interno del microservicio"
+		)
+	})
+	@PutMapping("/{platoId}")
+	public ResponseEntity<PlatoRespuestaDto> modificarPlato(
+			@PathVariable Long platoId,
+			@Valid @RequestBody
+			ModificarPlatoSolicitudDto solicitud,
+			@AuthenticationPrincipal
+			UsuarioAutenticado usuarioAutenticado) {
+
+		PlatoRespuestaDto respuesta =
+				modificarPlatoHandler.ejecutar(
+						platoId,
+						solicitud,
+						usuarioAutenticado.getUsuarioId()
+				);
+
+		return ResponseEntity.ok(respuesta);
+	}
+
+	@Operation(
+			summary = "Activar o desactivar plato",
+			description =
+				"Cambia el estado de un plato perteneciente "
+				+ "a un restaurante del propietario autenticado"
+	)
+	@SecurityRequirement(name = "autenticacionBearer")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "Estado actualizado correctamente"
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "Estado inválido"
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "Token ausente, inválido o expirado"
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "Perfil no autorizado o restaurante ajeno"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Plato o restaurante no encontrado"
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "Error interno del microservicio"
+		)
+	})
+	@PatchMapping("/{platoId}/estado")
+	public ResponseEntity<PlatoRespuestaDto>
+			cambiarEstadoPlato(
+					@PathVariable Long platoId,
+					@Valid @RequestBody
+					CambiarEstadoPlatoSolicitudDto solicitud,
+					@AuthenticationPrincipal
+					UsuarioAutenticado usuarioAutenticado) {
+
+		return ResponseEntity.ok(
+				cambiarEstadoPlatoHandler.ejecutar(
+						platoId,
+						solicitud,
+						usuarioAutenticado.getUsuarioId()
+				)
+		);
+	}
 }
