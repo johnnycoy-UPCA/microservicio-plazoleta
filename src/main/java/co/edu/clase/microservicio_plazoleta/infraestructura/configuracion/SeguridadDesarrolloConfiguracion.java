@@ -34,7 +34,6 @@ public class SeguridadDesarrolloConfiguracion {
 					"/v3/api-docs/**",
 					"/swagger-ui/**",
 					"/swagger-ui.html"
-					// ConstantesApi.API_RESTAURANTES
 				)
 				.permitAll()
 				.requestMatchers(
@@ -44,7 +43,8 @@ public class SeguridadDesarrolloConfiguracion {
 					PerfilUsuario.ADMINISTRADOR.name()
 				)
 				.requestMatchers(
-					ConstantesApi.API_PLATOS
+					ConstantesApi.API_PLATOS,
+					ConstantesApi.API_PLATOS + "/**"
 				)
 				.hasRole(
 					PerfilUsuario.PROPIETARIO.name()
@@ -56,7 +56,8 @@ public class SeguridadDesarrolloConfiguracion {
 				.ignoringRequestMatchers(
 					"/h2-console/**",
 					ConstantesApi.API_RESTAURANTES,
-					ConstantesApi.API_PLATOS
+					ConstantesApi.API_PLATOS,
+					ConstantesApi.API_PLATOS + "/**"
 				)
 			)
 			.headers(encabezados -> encabezados

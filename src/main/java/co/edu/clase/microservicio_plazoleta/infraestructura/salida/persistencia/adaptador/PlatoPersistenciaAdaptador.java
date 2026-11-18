@@ -5,6 +5,9 @@ import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.entidad.PlatoEntidad;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.mapeador.PlatoPersistenciaMapeador;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.repositorio.PlatoJpaRepositorio;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,4 +46,12 @@ public class PlatoPersistenciaAdaptador
                 entidadGuardada
         );
     }
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<Plato> buscarPorId(Long platoId) {
+		return platoJpaRepositorio
+				.findById(platoId)
+				.map(platoPersistenciaMapeador::aModelo);
+	}
 }
