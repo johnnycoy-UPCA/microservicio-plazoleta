@@ -3,6 +3,7 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.contro
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PlatoRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearPlatoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.ModificarPlatoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CambiarEstadoPlatoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearPlatoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ModificarPlatoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
@@ -49,6 +50,8 @@ class PlatoControladorRestTest {
     private CrearPlatoHandler crearPlatoHandler;
 	@Mock
 	private ModificarPlatoHandler modificarPlatoHandler;
+	@Mock
+	private CambiarEstadoPlatoHandler cambiarEstadoPlatoHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -58,7 +61,8 @@ class PlatoControladorRestTest {
         PlatoControladorRest controlador =
                 new PlatoControladorRest(
 					crearPlatoHandler,
-					modificarPlatoHandler
+					modificarPlatoHandler,
+					cambiarEstadoPlatoHandler
                 );
 
         LocalValidatorFactoryBean validador =

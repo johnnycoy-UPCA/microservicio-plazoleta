@@ -121,6 +121,9 @@ public final class MensajesError {
 
 	public static final String PLATO_NO_ENCONTRADO =
 			"El plato solicitado no fue encontrado";
+
+	public static final String ESTADO_PLATO_OBLIGATORIO =
+			"El estado del plato es obligatorio";
 			
     private MensajesError() {
         throw new IllegalStateException(
