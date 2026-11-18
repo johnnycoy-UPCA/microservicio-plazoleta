@@ -1,10 +1,12 @@
 package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.controlador;
 
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespuestaDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PlatoResumenDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.RestauranteRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.RestauranteResumenDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearRestauranteSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearRestauranteHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPlatosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarRestaurantesHandler;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,13 +35,16 @@ public class RestauranteControladorRest {
 
     private final CrearRestauranteHandler crearRestauranteHandler;
     private final ListarRestaurantesHandler listarRestaurantesHandler;
+    private final ListarPlatosHandler listarPlatosHandler;
 
     public RestauranteControladorRest(
             CrearRestauranteHandler crearRestauranteHandler,
-            ListarRestaurantesHandler listarRestaurantesHandler) {
+            ListarRestaurantesHandler listarRestaurantesHandler,
+            ListarPlatosHandler listarPlatosHandler) {
 
         this.crearRestauranteHandler = crearRestauranteHandler;
         this.listarRestaurantesHandler = listarRestaurantesHandler;
+        this.listarPlatosHandler = listarPlatosHandler;
     }
 
     @Operation(
@@ -141,6 +147,61 @@ public class RestauranteControladorRest {
 
         return ResponseEntity.ok(
                 listarRestaurantesHandler.ejecutar(
+                        pagina,
+                        tamano
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Listar platos del restaurante",
+            description =
+                "Lista los platos activos de un restaurante, "
+                + "opcionalmente filtrados por categoría"
+    )
+    @SecurityRequirement(name = "autenticacionBearer")
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Platos consultados correctamente"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Parámetros de paginación inválidos"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Token ausente, inválido o expirado"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "El usuario no tiene perfil CLIENTE"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Restaurante no encontrado"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Error interno del microservicio"
+        )
+    })
+    @GetMapping("/{restauranteId}/platos")
+    public ResponseEntity<
+            PaginaRespuestaDto<PlatoResumenDto>>
+            listarPlatos(
+                    @PathVariable Long restauranteId,
+                    @RequestParam(required = false)
+                    Long categoriaId,
+                    @RequestParam(defaultValue = "0")
+                    int pagina,
+                    @RequestParam(defaultValue = "10")
+                    int tamano) {
+
+        return ResponseEntity.ok(
+                listarPlatosHandler.ejecutar(
+                        restauranteId,
+                        categoriaId,
                         pagina,
                         tamano
                 )

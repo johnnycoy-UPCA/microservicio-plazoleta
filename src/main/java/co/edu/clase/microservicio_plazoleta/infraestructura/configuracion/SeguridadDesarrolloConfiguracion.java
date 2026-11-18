@@ -58,6 +58,13 @@ public class SeguridadDesarrolloConfiguracion {
 				.hasRole(
 					PerfilUsuario.PROPIETARIO.name()
 				)
+				.requestMatchers(
+					HttpMethod.GET,
+					ConstantesApi.API_RESTAURANTES + "/**"
+				)
+				.hasRole(
+					PerfilUsuario.CLIENTE.name()
+				)
 				.anyRequest()
 				.authenticated()
 			)
