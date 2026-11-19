@@ -14,6 +14,9 @@ public final class ConstantesValidacion {
     public static final int TAMANO_PAGINA_PREDETERMINADO = 10;
     public static final int TAMANO_PAGINA_MINIMO = 1;
     public static final int TAMANO_PAGINA_MAXIMO = 100;
+    public static final int CANTIDAD_MINIMA_PLATO_PEDIDO = 1;
+    public static final int CANTIDAD_MAXIMA_PLATO_PEDIDO = 100;
+    public static final int MAXIMO_LINEAS_PEDIDO = 50;
     
     public static final String EXPRESION_NIT = "^[0-9]+$";
     public static final String EXPRESION_CELULAR = "^\\+?[0-9]{1,12}$";

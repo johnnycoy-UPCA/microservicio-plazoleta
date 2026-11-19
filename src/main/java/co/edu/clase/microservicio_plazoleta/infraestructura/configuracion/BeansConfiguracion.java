@@ -10,13 +10,16 @@ import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCaso
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPlatosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ModificarPlatoServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ValidarRestaurantePropietarioServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CambiarEstadoPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ModificarPlatoCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.RealizarPedidoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ValidarRestaurantePropietarioCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
@@ -144,7 +147,26 @@ public class BeansConfiguracion {
 							restaurantePersistenciaPuerto) {
 
 		return new ValidarRestaurantePropietarioCasoUso(
-				restaurantePersistenciaPuerto
+			restaurantePersistenciaPuerto
+		);
+	}
+
+	@Bean
+	public RealizarPedidoServicioPuerto
+			realizarPedidoServicioPuerto(
+					PedidoPersistenciaPuerto
+						pedidoPersistenciaPuerto,
+					PlatoPersistenciaPuerto
+						platoPersistenciaPuerto,
+					RestaurantePersistenciaPuerto
+						restaurantePersistenciaPuerto,
+					Clock relojAplicacion) {
+
+		return new RealizarPedidoCasoUso(
+			pedidoPersistenciaPuerto,
+			platoPersistenciaPuerto,
+			restaurantePersistenciaPuerto,
+			relojAplicacion
 		);
 	}
 }

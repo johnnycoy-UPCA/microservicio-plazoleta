@@ -72,6 +72,13 @@ public class SeguridadDesarrolloConfiguracion {
 				.hasRole(
 					PerfilUsuario.CLIENTE.name()
 				)
+				.requestMatchers(
+						HttpMethod.POST,
+						ConstantesApi.API_PEDIDOS
+				)
+				.hasRole(
+						PerfilUsuario.CLIENTE.name()
+				)
 				.anyRequest()
 				.authenticated()
 			)
@@ -80,7 +87,8 @@ public class SeguridadDesarrolloConfiguracion {
 					"/h2-console/**",
 					ConstantesApi.API_RESTAURANTES,
 					ConstantesApi.API_PLATOS,
-					ConstantesApi.API_PLATOS + "/**"
+					ConstantesApi.API_PLATOS + "/**",
+					ConstantesApi.API_PEDIDOS
 				)
 			)
 			.headers(encabezados -> encabezados
