@@ -4,10 +4,13 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespu
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PlatoResumenDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.RestauranteRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.RestauranteResumenDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.RestauranteValidacionRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearRestauranteSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearRestauranteHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPlatosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarRestaurantesHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ValidarRestaurantePropietarioHandler;
+import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,15 +40,18 @@ public class RestauranteControladorRest {
     private final CrearRestauranteHandler crearRestauranteHandler;
     private final ListarRestaurantesHandler listarRestaurantesHandler;
     private final ListarPlatosHandler listarPlatosHandler;
+    private final ValidarRestaurantePropietarioHandler validarRestaurantePropietarioHandler;
 
     public RestauranteControladorRest(
             CrearRestauranteHandler crearRestauranteHandler,
             ListarRestaurantesHandler listarRestaurantesHandler,
-            ListarPlatosHandler listarPlatosHandler) {
+            ListarPlatosHandler listarPlatosHandler,
+            ValidarRestaurantePropietarioHandler validarRestaurantePropietarioHandler) {
 
         this.crearRestauranteHandler = crearRestauranteHandler;
         this.listarRestaurantesHandler = listarRestaurantesHandler;
         this.listarPlatosHandler = listarPlatosHandler;
+        this.validarRestaurantePropietarioHandler = validarRestaurantePropietarioHandler;
     }
 
     @Operation(
@@ -204,6 +211,47 @@ public class RestauranteControladorRest {
                         categoriaId,
                         pagina,
                         tamano
+                )
+        );
+    }
+
+    @Operation(
+            summary = "Validar restaurante del propietario",
+            description =
+                "Valida internamente que un restaurante esté activo "
+                + "y pertenezca al propietario autenticado"
+    )
+    @SecurityRequirement(name = "autenticacionBearer")
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Restaurante validado correctamente"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Token ausente, inválido o expirado"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "El restaurante pertenece a otro propietario"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Restaurante no encontrado"
+        )
+    })
+    @GetMapping("/{restauranteId}/validacion-propietario")
+    public ResponseEntity<
+            RestauranteValidacionRespuestaDto>
+            validarRestaurantePropietario(
+                    @PathVariable Long restauranteId,
+                    @AuthenticationPrincipal
+                    UsuarioAutenticado usuarioAutenticado) {
+
+        return ResponseEntity.ok(
+                validarRestaurantePropietarioHandler.ejecutar(
+                        restauranteId,
+                        usuarioAutenticado.getUsuarioId()
                 )
         );
     }

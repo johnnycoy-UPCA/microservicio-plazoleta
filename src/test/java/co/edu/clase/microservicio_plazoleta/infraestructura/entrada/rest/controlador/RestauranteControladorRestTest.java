@@ -5,6 +5,7 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.CrearRestau
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CrearRestauranteHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPlatosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarRestaurantesHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ValidarRestaurantePropietarioHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,8 @@ class RestauranteControladorRestTest {
 	private ListarRestaurantesHandler listarRestaurantesHandler;
 	@Mock
 	private ListarPlatosHandler listarPlatosHandler;
+	@Mock
+	private ValidarRestaurantePropietarioHandler validarRestaurantePropietarioHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -46,7 +49,8 @@ class RestauranteControladorRestTest {
                 new RestauranteControladorRest(
                         crearRestauranteHandler,
 						listarRestaurantesHandler,
-						listarPlatosHandler
+						listarPlatosHandler,
+						validarRestaurantePropietarioHandler
                 );
 
         LocalValidatorFactoryBean validador =
