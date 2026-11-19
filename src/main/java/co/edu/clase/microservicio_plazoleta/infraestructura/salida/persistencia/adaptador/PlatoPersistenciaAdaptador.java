@@ -7,6 +7,7 @@ import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.mapeador.PlatoPersistenciaMapeador;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.repositorio.PlatoJpaRepositorio;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -95,5 +96,17 @@ public class PlatoPersistenciaAdaptador
 				paginaEntidades.isFirst(),
 				paginaEntidades.isLast()
 		);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Plato> buscarActivosPorIds(
+			List<Long> platoIds) {
+
+		return platoJpaRepositorio
+				.findByIdInAndActivoTrue(platoIds)
+				.stream()
+				.map(platoPersistenciaMapeador::aModelo)
+				.toList();
 	}
 }

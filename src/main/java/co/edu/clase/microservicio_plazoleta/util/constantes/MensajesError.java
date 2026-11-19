@@ -130,6 +130,35 @@ public final class MensajesError {
 
 	public static final String ESTADO_PLATO_OBLIGATORIO =
 			"El estado del plato es obligatorio";
+
+	public static final String PEDIDO_VACIO =
+			"El pedido debe contener al menos un plato";
+
+	public static final String PEDIDO_ACTIVO_EXISTENTE =
+			"El cliente ya tiene un pedido en proceso";
+
+	public static final String PLATO_PEDIDO_INVALIDO =
+			"Uno de los platos no existe, está inactivo "
+					+ "o no pertenece al restaurante seleccionado";
+
+	public static final String PLATO_REPETIDO =
+			"Un plato no puede aparecer más de una vez "
+					+ "en el mismo pedido";
+
+	public static final String CANTIDAD_PLATO_INVALIDA =
+			"La cantidad de cada plato debe estar entre 1 y 100";
+
+	public static final String LIMITE_LINEAS_PEDIDO_EXCEDIDO =
+			"El pedido no puede contener más de 50 platos diferentes";
+
+	public static final String DETALLES_PEDIDO_OBLIGATORIOS =
+			"El pedido debe contener al menos un plato";
+
+	public static final String PLATO_PEDIDO_OBLIGATORIO =
+			"El identificador del plato es obligatorio";
+
+	public static final String CANTIDAD_PEDIDO_OBLIGATORIA =
+			"La cantidad del plato es obligatoria";
 			
     private MensajesError() {
         throw new IllegalStateException(

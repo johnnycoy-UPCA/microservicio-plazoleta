@@ -31,6 +31,13 @@ public final class CodigosError {
     public static final String PAGINA_INVALIDA = "PAG-001";
     public static final String TAMANO_PAGINA_INVALIDO = "PAG-002";
 
+    public static final String PEDIDO_VACIO = "PED-001";
+    public static final String PEDIDO_ACTIVO_EXISTENTE = "PED-002";
+    public static final String PLATO_PEDIDO_INVALIDO = "PED-003";
+    public static final String PLATO_REPETIDO = "PED-004";
+    public static final String CANTIDAD_PLATO_INVALIDA = "PED-005";
+    public static final String LIMITE_LINEAS_PEDIDO_EXCEDIDO = "PED-006";
+
     private CodigosError() {
         throw new IllegalStateException(
                 "No se permite crear instancias de una clase de constantes"
