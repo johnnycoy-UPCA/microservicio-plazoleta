@@ -2,17 +2,20 @@ package co.edu.clase.microservicio_plazoleta.dominio.casouso;
 
 import co.edu.clase.microservicio_plazoleta.dominio.excepcion.ExcepcionPlazoleta;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.DetallePedido;
+import co.edu.clase.microservicio_plazoleta.dominio.modelo.EventoTrazabilidad;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Pedido;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Plato;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Restaurante;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
 import co.edu.clase.microservicio_plazoleta.util.constantes.CodigosError;
 import co.edu.clase.microservicio_plazoleta.util.enumeraciones.EstadoPedido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -24,6 +27,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -37,16 +41,13 @@ class RealizarPedidoCasoUsoTest {
     private static final Long RESTAURANTE_ID = 1L;
 
     @Mock
-    private PedidoPersistenciaPuerto
-            pedidoPersistenciaPuerto;
-
+    private PedidoPersistenciaPuerto pedidoPersistenciaPuerto;
     @Mock
-    private PlatoPersistenciaPuerto
-            platoPersistenciaPuerto;
-
+    private PlatoPersistenciaPuerto platoPersistenciaPuerto;
     @Mock
-    private RestaurantePersistenciaPuerto
-            restaurantePersistenciaPuerto;
+    private RestaurantePersistenciaPuerto restaurantePersistenciaPuerto;
+	@Mock
+	private TrazabilidadRegistroPuerto trazabilidadRegistroPuerto;
 
     private RealizarPedidoCasoUso casoUso;
 
@@ -61,6 +62,7 @@ class RealizarPedidoCasoUsoTest {
                 pedidoPersistenciaPuerto,
                 platoPersistenciaPuerto,
                 restaurantePersistenciaPuerto,
+				trazabilidadRegistroPuerto,
                 reloj
         );
     }
@@ -132,6 +134,43 @@ class RealizarPedidoCasoUsoTest {
 
         verify(pedidoPersistenciaPuerto)
                 .guardar(pedido);
+
+		// verify(trazabilidadRegistroPuerto)
+		// 		.registrar(any(EventoTrazabilidad.class));
+
+		ArgumentCaptor<EventoTrazabilidad> captorEvento =
+				ArgumentCaptor.forClass(
+						EventoTrazabilidad.class
+				);
+
+		verify(trazabilidadRegistroPuerto)
+				.registrar(captorEvento.capture());
+
+		EventoTrazabilidad eventoRegistrado =
+				captorEvento.getValue();
+
+		assertEquals(
+				100L,
+				eventoRegistrado.getPedidoId()
+		);
+		assertEquals(
+				CLIENTE_ID,
+				eventoRegistrado.getClienteId()
+		);
+		assertEquals(
+				RESTAURANTE_ID,
+				eventoRegistrado.getRestauranteId()
+		);
+		assertNull(
+				eventoRegistrado.getEmpleadoId()
+		);
+		assertNull(
+				eventoRegistrado.getEstadoAnterior()
+		);
+		assertEquals(
+				EstadoPedido.PENDIENTE,
+				eventoRegistrado.getEstadoNuevo()
+		);
     }
 
     @Test
@@ -151,6 +190,9 @@ class RealizarPedidoCasoUsoTest {
 
         verify(pedidoPersistenciaPuerto, never())
                 .guardar(any());
+
+		verify(trazabilidadRegistroPuerto, never())
+				.registrar(any(EventoTrazabilidad.class));
     }
 
     @Test
@@ -172,6 +214,9 @@ class RealizarPedidoCasoUsoTest {
                 CodigosError.PEDIDO_ACTIVO_EXISTENTE,
                 excepcion.getCodigo()
         );
+
+		verify(trazabilidadRegistroPuerto, never())
+				.registrar(any(EventoTrazabilidad.class));
     }
 
     @Test
@@ -219,6 +264,9 @@ class RealizarPedidoCasoUsoTest {
                 CodigosError.PLATO_PEDIDO_INVALIDO,
                 excepcion.getCodigo()
         );
+
+		verify(trazabilidadRegistroPuerto, never())
+				.registrar(any(EventoTrazabilidad.class));
     }
 
     private Pedido crearPedido() {

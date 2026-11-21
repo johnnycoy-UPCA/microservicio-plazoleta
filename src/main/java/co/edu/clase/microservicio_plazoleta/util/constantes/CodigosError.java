@@ -38,6 +38,9 @@ public final class CodigosError {
     public static final String CANTIDAD_PLATO_INVALIDA = "PED-005";
     public static final String LIMITE_LINEAS_PEDIDO_EXCEDIDO = "PED-006";
 
+    public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
+    public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";
+
     private CodigosError() {
         throw new IllegalStateException(
                 "No se permite crear instancias de una clase de constantes"

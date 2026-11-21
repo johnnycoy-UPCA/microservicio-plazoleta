@@ -27,6 +27,10 @@ servicios:
   usuarios:
     url-base: ${USUARIOS_URL_BASE:http://localhost:8081}
 
+  trazabilidad:
+    url-base: ${TRAZABILIDAD_URL_BASE:http://localhost:8084}
+    api-key: ${TRAZABILIDAD_API_KEY}
+
 seguridad:
   jwt:
     secreto: ${JWT_SECRETO}

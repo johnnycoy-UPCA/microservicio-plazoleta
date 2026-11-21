@@ -23,6 +23,8 @@ import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -37,7 +39,7 @@ public class BeansConfiguracion {
         return Clock.systemDefaultZone();
     }
 
-    @Bean
+    @Bean("clienteUsuarios")
     public RestClient clienteUsuarios(
         //     RestClient.Builder constructor,
 		UsuariosServicioPropiedades propiedades) {
@@ -160,13 +162,25 @@ public class BeansConfiguracion {
 						platoPersistenciaPuerto,
 					RestaurantePersistenciaPuerto
 						restaurantePersistenciaPuerto,
+					TrazabilidadRegistroPuerto
+						trazabilidadRegistroPuerto,
 					Clock relojAplicacion) {
 
 		return new RealizarPedidoCasoUso(
 			pedidoPersistenciaPuerto,
 			platoPersistenciaPuerto,
 			restaurantePersistenciaPuerto,
+			trazabilidadRegistroPuerto,
 			relojAplicacion
 		);
+	}
+
+	@Bean("clienteTrazabilidad")
+	public RestClient clienteTrazabilidad(
+			TrazabilidadServicioPropiedades propiedades) {
+
+		return RestClient.builder()
+				.baseUrl(propiedades.getUrlBase())
+				.build();
 	}
 }

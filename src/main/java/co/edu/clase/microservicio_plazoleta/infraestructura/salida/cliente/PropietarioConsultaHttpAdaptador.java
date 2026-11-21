@@ -10,6 +10,7 @@ import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesSeguridad;
 import co.edu.clase.microservicio_plazoleta.util.constantes.MensajesError;
 import co.edu.clase.microservicio_plazoleta.util.enumeraciones.CategoriaError;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 // import org.springframework.http.HttpStatusCode;
@@ -26,6 +27,7 @@ public class PropietarioConsultaHttpAdaptador
     private final RestClient clienteUsuarios;
 
     public PropietarioConsultaHttpAdaptador(
+		@Qualifier("clienteUsuarios")
 		RestClient clienteUsuarios) {
 
         this.clienteUsuarios = clienteUsuarios;
