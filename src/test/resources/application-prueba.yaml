@@ -20,6 +20,10 @@ servicios:
   usuarios:
     url-base: http://localhost:8081
 
+  trazabilidad:
+    url-base: http://localhost:8084
+    api-key: clave-interna-prueba-2026
+
 seguridad:
   jwt:
     secreto: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=

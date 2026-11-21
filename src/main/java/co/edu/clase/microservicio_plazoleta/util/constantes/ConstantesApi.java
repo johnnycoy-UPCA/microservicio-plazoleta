@@ -10,6 +10,8 @@ public final class ConstantesApi {
 
     public static final String API_PEDIDOS = "/api/v1/pedidos";
 
+    public static final String REGISTRO_EVENTOS_TRAZABILIDAD = "/api/v1/trazabilidad/eventos";
+
     private ConstantesApi() {
         throw new IllegalStateException(
                 "No se permite crear instancias de una clase de constantes"

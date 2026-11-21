@@ -8,6 +8,7 @@ public final class ConstantesSeguridad {
     public static final String RECLAMO_PERFIL = "perfil";
     public static final String EMISOR_TOKEN = "microservicio-usuarios";
     public static final String PREFIJO_AUTORIDAD = "ROLE_";
+    public static final String ENCABEZADO_API_KEY_INTERNA = "X-Internal-Api-Key";
 
     private ConstantesSeguridad() {
         throw new IllegalStateException(

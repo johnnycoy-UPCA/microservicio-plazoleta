@@ -139,11 +139,11 @@ public final class MensajesError {
 
 	public static final String PLATO_PEDIDO_INVALIDO =
 			"Uno de los platos no existe, está inactivo "
-					+ "o no pertenece al restaurante seleccionado";
+			+ "o no pertenece al restaurante seleccionado";
 
 	public static final String PLATO_REPETIDO =
 			"Un plato no puede aparecer más de una vez "
-					+ "en el mismo pedido";
+			+ "en el mismo pedido";
 
 	public static final String CANTIDAD_PLATO_INVALIDA =
 			"La cantidad de cada plato debe estar entre 1 y 100";
@@ -159,6 +159,13 @@ public final class MensajesError {
 
 	public static final String CANTIDAD_PEDIDO_OBLIGATORIA =
 			"La cantidad del plato es obligatoria";
+
+	public static final String TRAZABILIDAD_NO_DISPONIBLE =
+			"No fue posible registrar el evento "
+			+ "en el Microservicio Trazabilidad";
+
+	public static final String EVENTO_TRAZABILIDAD_RECHAZADO =
+			"El Microservicio Trazabilidad rechazó el evento";
 			
     private MensajesError() {
         throw new IllegalStateException(

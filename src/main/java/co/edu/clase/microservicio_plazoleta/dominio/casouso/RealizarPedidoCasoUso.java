@@ -3,12 +3,14 @@ package co.edu.clase.microservicio_plazoleta.dominio.casouso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.excepcion.ExcepcionPlazoleta;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.DetallePedido;
+import co.edu.clase.microservicio_plazoleta.dominio.modelo.EventoTrazabilidad;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Pedido;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Plato;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Restaurante;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
 import co.edu.clase.microservicio_plazoleta.util.constantes.CodigosError;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesValidacion;
 import co.edu.clase.microservicio_plazoleta.util.constantes.MensajesError;
@@ -27,32 +29,23 @@ import java.util.Set;
 public class RealizarPedidoCasoUso
         implements RealizarPedidoServicioPuerto {
 
-    private final PedidoPersistenciaPuerto
-            pedidoPersistenciaPuerto;
-
-    private final PlatoPersistenciaPuerto
-            platoPersistenciaPuerto;
-
-    private final RestaurantePersistenciaPuerto
-            restaurantePersistenciaPuerto;
-
+    private final PedidoPersistenciaPuerto pedidoPersistenciaPuerto;
+    private final PlatoPersistenciaPuerto platoPersistenciaPuerto;
+    private final RestaurantePersistenciaPuerto restaurantePersistenciaPuerto;
+	private final TrazabilidadRegistroPuerto trazabilidadRegistroPuerto;
     private final Clock reloj;
 
     public RealizarPedidoCasoUso(
-            PedidoPersistenciaPuerto
-                    pedidoPersistenciaPuerto,
-            PlatoPersistenciaPuerto
-                    platoPersistenciaPuerto,
-            RestaurantePersistenciaPuerto
-                    restaurantePersistenciaPuerto,
+            PedidoPersistenciaPuerto pedidoPersistenciaPuerto,
+            PlatoPersistenciaPuerto platoPersistenciaPuerto,
+            RestaurantePersistenciaPuerto restaurantePersistenciaPuerto,
+			TrazabilidadRegistroPuerto trazabilidadRegistroPuerto,
             Clock reloj) {
 
-        this.pedidoPersistenciaPuerto =
-                pedidoPersistenciaPuerto;
-        this.platoPersistenciaPuerto =
-                platoPersistenciaPuerto;
-        this.restaurantePersistenciaPuerto =
-                restaurantePersistenciaPuerto;
+        this.pedidoPersistenciaPuerto = pedidoPersistenciaPuerto;
+        this.platoPersistenciaPuerto = platoPersistenciaPuerto;
+        this.restaurantePersistenciaPuerto = restaurantePersistenciaPuerto;
+		this.trazabilidadRegistroPuerto = trazabilidadRegistroPuerto;
         this.reloj = reloj;
     }
 
@@ -95,7 +88,22 @@ public class RealizarPedidoCasoUso
         pedido.setFechaActualizacion(fechaActual);
         pedido.setVersion(0L);
 
-        return pedidoPersistenciaPuerto.guardar(pedido);
+        // return pedidoPersistenciaPuerto.guardar(pedido);
+		Pedido pedidoGuardado =
+				pedidoPersistenciaPuerto.guardar(pedido);
+
+		trazabilidadRegistroPuerto.registrar(
+				new EventoTrazabilidad(
+						pedidoGuardado.getId(),
+						pedidoGuardado.getClienteId(),
+						pedidoGuardado.getRestauranteId(),
+						null,
+						null,
+						EstadoPedido.PENDIENTE
+				)
+		);
+
+		return pedidoGuardado;
     }
 
     private void validarDetalles(
