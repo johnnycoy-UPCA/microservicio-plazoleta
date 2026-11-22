@@ -3,10 +3,12 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.configuracion;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CambiarEstadoPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearRestauranteServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.ListarPedidosServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ListarPlatosServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ListarRestaurantesServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPedidosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPlatosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ModificarPlatoServicioPuerto;
@@ -21,6 +23,7 @@ import co.edu.clase.microservicio_plazoleta.dominio.casouso.ProcesarEventoPendie
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.RealizarPedidoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ValidarRestaurantePropietarioCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.EmpleadoConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoPendientePersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoSerializadorPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
@@ -214,6 +217,20 @@ public class BeansConfiguracion {
 				eventoSerializadorPuerto,
 				trazabilidadRegistroPuerto,
 				relojAplicacion
+		);
+	}
+
+	@Bean
+	public ListarPedidosServicioPuerto
+			listarPedidosServicioPuerto(
+					PedidoPersistenciaPuerto
+							pedidoPersistenciaPuerto,
+					EmpleadoConsultaPuerto
+							empleadoConsultaPuerto) {
+
+		return new ListarPedidosCasoUso(
+				pedidoPersistenciaPuerto,
+				empleadoConsultaPuerto
 		);
 	}
 }

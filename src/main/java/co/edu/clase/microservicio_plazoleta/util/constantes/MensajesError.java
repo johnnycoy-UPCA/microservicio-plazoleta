@@ -173,6 +173,17 @@ public final class MensajesError {
 
 	public static final String EVENTO_PENDIENTE_NO_ENCONTRADO =
 			"El evento pendiente no fue encontrado";
+
+	public static final String EMPLEADO_NO_VALIDO =
+			"El empleado no existe, está inactivo "
+					+ "o no tiene restaurante asociado";
+
+	// public static final String SERVICIO_USUARIOS_NO_DISPONIBLE =
+	// 		"No fue posible validar el empleado "
+	// 				+ "en el Microservicio Usuarios";
+
+	public static final String ESTADO_PEDIDO_OBLIGATORIO =
+			"El estado del pedido es obligatorio";
 			
     private MensajesError() {
         throw new IllegalStateException(

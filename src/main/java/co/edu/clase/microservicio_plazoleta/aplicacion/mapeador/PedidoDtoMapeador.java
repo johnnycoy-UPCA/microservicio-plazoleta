@@ -42,6 +42,9 @@ public class PedidoDtoMapeador {
         respuesta.setRestauranteId(
                 pedido.getRestauranteId()
         );
+		respuesta.setEmpleadoAsignadoId(
+				pedido.getEmpleadoAsignadoId()
+		);
         respuesta.setEstado(pedido.getEstado());
         respuesta.setTotal(pedido.getTotal());
         respuesta.setPlatos(

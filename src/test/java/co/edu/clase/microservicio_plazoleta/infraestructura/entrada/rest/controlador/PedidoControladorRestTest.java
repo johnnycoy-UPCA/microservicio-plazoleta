@@ -1,9 +1,11 @@
 package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.controlador;
 
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.DetallePedidoRespuestaDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.DetallePedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
@@ -37,12 +39,15 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(MockitoExtension.class)
 class PedidoControladorRestTest {
 
     @Mock
     private RealizarPedidoHandler realizarPedidoHandler;
+	@Mock
+	private ListarPedidosHandler listarPedidosHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -51,7 +56,8 @@ class PedidoControladorRestTest {
     void configurar() {
         PedidoControladorRest controlador =
                 new PedidoControladorRest(
-                        realizarPedidoHandler
+                        realizarPedidoHandler,
+						listarPedidosHandler
                 );
 
         LocalValidatorFactoryBean validador =
@@ -135,6 +141,65 @@ class PedidoControladorRestTest {
                 .andExpect(jsonPath("$.detalles.platos")
                         .exists());
     }
+
+	@Test
+	void debeListarPedidosPorEstado()
+			throws Exception {
+
+		PaginaRespuestaDto<PedidoRespuestaDto> pagina =
+				new PaginaRespuestaDto<>(
+						List.of(crearRespuesta()),
+						0,
+						10,
+						1L,
+						1,
+						true,
+						true
+				);
+
+		when(listarPedidosHandler.ejecutar(
+				eq(30L),
+				eq("token-empleado"),
+				eq(EstadoPedido.PENDIENTE),
+				eq(0),
+				eq(10)
+		)).thenReturn(pagina);
+
+		mockMvc.perform(get(ConstantesApi.API_PEDIDOS)
+						.param(
+								"estado",
+								"PENDIENTE"
+						)
+						.param("pagina", "0")
+						.param("tamano", "10")
+						.with(
+								autenticacionEmpleado()
+						))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath(
+						"$.contenido.length()"
+				).value(1))
+				.andExpect(jsonPath(
+						"$.contenido[0].id"
+				).value(100))
+				.andExpect(jsonPath(
+						"$.contenido[0].estado"
+				).value("PENDIENTE"))
+				.andExpect(jsonPath(
+						"$.paginaActual"
+				).value(0))
+				.andExpect(jsonPath(
+						"$.totalElementos"
+				).value(1));
+
+		verify(listarPedidosHandler).ejecutar(
+				eq(30L),
+				eq("token-empleado"),
+				eq(EstadoPedido.PENDIENTE),
+				eq(0),
+				eq(10)
+		);
+	}
 
     private RequestPostProcessor autenticacionCliente() {
         return solicitud -> {
@@ -223,4 +288,35 @@ class PedidoControladorRestTest {
 
         return respuesta;
     }
+
+	private RequestPostProcessor
+			autenticacionEmpleado() {
+
+		return solicitud -> {
+			UsuarioAutenticado principal =
+					new UsuarioAutenticado(
+							30L,
+							"empleado@correo.com",
+							PerfilUsuario.EMPLEADO,
+							"token-empleado"
+					);
+
+			UsernamePasswordAuthenticationToken autenticacion =
+					new UsernamePasswordAuthenticationToken(
+							principal,
+							null,
+							List.of(
+									new SimpleGrantedAuthority(
+											"ROLE_EMPLEADO"
+									)
+							)
+					);
+
+			SecurityContextHolder
+					.getContext()
+					.setAuthentication(autenticacion);
+
+			return solicitud;
+		};
+	}
 }

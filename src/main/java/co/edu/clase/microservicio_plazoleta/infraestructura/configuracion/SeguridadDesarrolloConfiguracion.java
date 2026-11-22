@@ -79,6 +79,13 @@ public class SeguridadDesarrolloConfiguracion {
 				.hasRole(
 						PerfilUsuario.CLIENTE.name()
 				)
+				.requestMatchers(
+						HttpMethod.GET,
+						ConstantesApi.API_PEDIDOS
+				)
+				.hasRole(
+						PerfilUsuario.EMPLEADO.name()
+				)
 				.anyRequest()
 				.authenticated()
 			)
