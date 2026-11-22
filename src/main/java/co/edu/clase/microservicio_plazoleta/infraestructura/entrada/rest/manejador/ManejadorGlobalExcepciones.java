@@ -5,9 +5,12 @@ import co.edu.clase.microservicio_plazoleta.util.constantes.CodigosError;
 import co.edu.clase.microservicio_plazoleta.util.constantes.MensajesError;
 import co.edu.clase.microservicio_plazoleta.util.enumeraciones.CategoriaError;
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -101,6 +104,28 @@ public class ManejadorGlobalExcepciones {
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(respuesta);
     }
+
+	@ExceptionHandler({
+			ObjectOptimisticLockingFailureException.class,
+			OptimisticLockingFailureException.class
+	})
+	public ResponseEntity<ErrorRespuesta>
+			manejarConflictoOptimista(
+					Exception excepcion,
+					HttpServletRequest solicitud) {
+
+		HttpStatus estado = HttpStatus.CONFLICT;
+
+		return ResponseEntity.status(estado).body(
+				construirRespuesta(
+						estado,
+						CodigosError.PEDIDO_MODIFICADO_CONCURRENTEMENTE,
+						MensajesError.PEDIDO_MODIFICADO_CONCURRENTEMENTE,
+						solicitud.getRequestURI(),
+						Map.of()
+				)
+		);
+	}
 
     private ErrorRespuesta construirRespuesta(
             HttpStatus estadoHttp,
