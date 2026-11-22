@@ -20,9 +20,7 @@ public class TrazabilidadRegistroHttpAdaptador
         implements TrazabilidadRegistroPuerto {
 
     private final RestClient clienteTrazabilidad;
-
-    private final TrazabilidadServicioPropiedades
-            propiedades;
+    private final TrazabilidadServicioPropiedades propiedades;
 
     public TrazabilidadRegistroHttpAdaptador(
 			@Qualifier("clienteTrazabilidad")
@@ -52,50 +50,47 @@ public class TrazabilidadRegistroHttpAdaptador
 
         try {
             clienteTrazabilidad.post()
-                    .uri(
-                            ConstantesApi
-                                    .REGISTRO_EVENTOS_TRAZABILIDAD
-                    )
-                    .header(
-                            ConstantesSeguridad
-                                    .ENCABEZADO_API_KEY_INTERNA,
-                            propiedades.getApiKey()
-                    )
-                    .body(solicitud)
-                    .exchange(
-                            (peticion, respuesta) -> {
-                                if (respuesta.getStatusCode()
-                                        .is2xxSuccessful()) {
+				.uri(
+					ConstantesApi.REGISTRO_EVENTOS_TRAZABILIDAD
+				)
+				.header(
+					ConstantesSeguridad.ENCABEZADO_API_KEY_INTERNA,
+					propiedades.getApiKey()
+				)
+				.body(solicitud)
+				.exchange(
+					(peticion, respuesta) -> {
+						if (respuesta.getStatusCode()
+								.is2xxSuccessful()
+								|| respuesta.getStatusCode()
+								.value() == 409
+							) {
 
-                                    return null;
-                                }
+							return null;
+						}
 
-                                if (respuesta.getStatusCode()
-                                        .value() == 400
-                                        || respuesta.getStatusCode()
-                                        .value() == 409) {
+						if (respuesta.getStatusCode()
+								.value() == 400
+								// || respuesta.getStatusCode()
+								// .value() == 409
+							) {
 
-                                    throw new ExcepcionPlazoleta(
-                                            CodigosError
-                                                    .EVENTO_TRAZABILIDAD_RECHAZADO,
-                                            MensajesError
-                                                    .EVENTO_TRAZABILIDAD_RECHAZADO,
-                                            CategoriaError
-                                                    .DEPENDENCIA_EXTERNA
-                                    );
-                                }
+							throw new ExcepcionPlazoleta(
+									CodigosError.EVENTO_TRAZABILIDAD_RECHAZADO,
+									MensajesError.EVENTO_TRAZABILIDAD_RECHAZADO,
+									CategoriaError.DEPENDENCIA_EXTERNA
+							);
+						}
 
-                                throw crearExcepcionDependencia();
-                            }
-                    );
+						throw crearExcepcionDependencia();
+					}
+				);
         } catch (ExcepcionPlazoleta excepcion) {
             throw excepcion;
         } catch (RestClientException excepcion) {
             throw new ExcepcionPlazoleta(
-                    CodigosError
-                            .TRAZABILIDAD_NO_DISPONIBLE,
-                    MensajesError
-                            .TRAZABILIDAD_NO_DISPONIBLE,
+                    CodigosError.TRAZABILIDAD_NO_DISPONIBLE,
+                    MensajesError.TRAZABILIDAD_NO_DISPONIBLE,
                     CategoriaError.DEPENDENCIA_EXTERNA,
                     excepcion
             );
@@ -114,10 +109,8 @@ public class TrazabilidadRegistroHttpAdaptador
             crearExcepcionDependencia() {
 
         return new ExcepcionPlazoleta(
-                CodigosError
-                        .TRAZABILIDAD_NO_DISPONIBLE,
-                MensajesError
-                        .TRAZABILIDAD_NO_DISPONIBLE,
+                CodigosError.TRAZABILIDAD_NO_DISPONIBLE,
+                MensajesError.TRAZABILIDAD_NO_DISPONIBLE,
                 CategoriaError.DEPENDENCIA_EXTERNA
         );
     }

@@ -5,6 +5,8 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPed
 import co.edu.clase.microservicio_plazoleta.aplicacion.mapeador.PedidoDtoMapeador;
 import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Pedido;
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,19 +28,18 @@ public class RealizarPedidoHandler {
         this.pedidoDtoMapeador = pedidoDtoMapeador;
     }
 
-    public PedidoRespuestaDto ejecutar(
+    @Transactional
+	public PedidoRespuestaDto ejecutar(
             RealizarPedidoSolicitudDto solicitud,
             Long clienteId) {
 
         Pedido pedido = pedidoDtoMapeador.aModelo(
-                solicitud,
-                clienteId
+			solicitud,
+			clienteId
         );
 
         Pedido creado =
-                realizarPedidoServicioPuerto.realizar(
-                        pedido
-                );
+			realizarPedidoServicioPuerto.realizar(pedido);
 
         return pedidoDtoMapeador.aRespuesta(creado);
     }
