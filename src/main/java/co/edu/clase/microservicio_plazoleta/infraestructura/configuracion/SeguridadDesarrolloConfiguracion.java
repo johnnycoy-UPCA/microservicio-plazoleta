@@ -86,6 +86,13 @@ public class SeguridadDesarrolloConfiguracion {
 				.hasRole(
 						PerfilUsuario.EMPLEADO.name()
 				)
+				.requestMatchers(
+						HttpMethod.PATCH,
+						ConstantesApi.API_PEDIDOS + "/*/asignacion"
+				)
+				.hasRole(
+						PerfilUsuario.EMPLEADO.name()
+				)
 				.anyRequest()
 				.authenticated()
 			)
@@ -95,7 +102,8 @@ public class SeguridadDesarrolloConfiguracion {
 					ConstantesApi.API_RESTAURANTES,
 					ConstantesApi.API_PLATOS,
 					ConstantesApi.API_PLATOS + "/**",
-					ConstantesApi.API_PEDIDOS
+					ConstantesApi.API_PEDIDOS,
+					ConstantesApi.API_PEDIDOS + "/*/asignacion"
 				)
 			)
 			.headers(encabezados -> encabezados

@@ -5,6 +5,7 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespu
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.DetallePedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
@@ -40,6 +41,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
 @ExtendWith(MockitoExtension.class)
 class PedidoControladorRestTest {
@@ -48,6 +50,8 @@ class PedidoControladorRestTest {
     private RealizarPedidoHandler realizarPedidoHandler;
 	@Mock
 	private ListarPedidosHandler listarPedidosHandler;
+	@Mock
+	private AsignarPedidoHandler asignarPedidoHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -57,7 +61,8 @@ class PedidoControladorRestTest {
         PedidoControladorRest controlador =
                 new PedidoControladorRest(
                         realizarPedidoHandler,
-						listarPedidosHandler
+						listarPedidosHandler,
+						asignarPedidoHandler
                 );
 
         LocalValidatorFactoryBean validador =
@@ -198,6 +203,49 @@ class PedidoControladorRestTest {
 				eq(EstadoPedido.PENDIENTE),
 				eq(0),
 				eq(10)
+		);
+	}
+
+	@Test
+	void debeAsignarPedidoYResponderCorrectamente()
+			throws Exception {
+
+		PedidoRespuestaDto respuesta =
+				crearRespuesta();
+
+		respuesta.setEmpleadoAsignadoId(30L);
+		respuesta.setEstado(
+				EstadoPedido.EN_PREPARACION
+		);
+
+		when(asignarPedidoHandler.ejecutar(
+				eq(100L),
+				eq(30L),
+				eq("token-empleado")
+		)).thenReturn(respuesta);
+
+		mockMvc.perform(
+						patch(
+								ConstantesApi.API_PEDIDOS
+										+ "/100/asignacion"
+						)
+								.with(
+										autenticacionEmpleado()
+								)
+				)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id")
+						.value(100))
+				.andExpect(jsonPath(
+						"$.empleadoAsignadoId"
+				).value(30))
+				.andExpect(jsonPath("$.estado")
+						.value("EN_PREPARACION"));
+
+		verify(asignarPedidoHandler).ejecutar(
+				eq(100L),
+				eq(30L),
+				eq("token-empleado")
 		);
 	}
 

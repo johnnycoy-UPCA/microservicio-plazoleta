@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
 @Component
 public class PedidoPersistenciaAdaptador
@@ -101,5 +102,13 @@ public class PedidoPersistenciaAdaptador
 				resultado.isFirst(),
 				resultado.isLast()
 		);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Optional<Pedido> buscarPorId(Long pedidoId) {
+		return pedidoJpaRepositorio
+				.findById(pedidoId)
+				.map(pedidoPersistenciaMapeador::aModelo);
 	}
 }

@@ -3,6 +3,7 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.contro
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,13 +37,16 @@ public class PedidoControladorRest {
 
     private final RealizarPedidoHandler realizarPedidoHandler;
     private final ListarPedidosHandler listarPedidosHandler;
+	private final AsignarPedidoHandler asignarPedidoHandler;
 
     public PedidoControladorRest(
             RealizarPedidoHandler realizarPedidoHandler,
-			ListarPedidosHandler listarPedidosHandler) {
+			ListarPedidosHandler listarPedidosHandler,
+			AsignarPedidoHandler asignarPedidoHandler) {
 
         this.realizarPedidoHandler = realizarPedidoHandler;
 		this.listarPedidosHandler = listarPedidosHandler;
+		this.asignarPedidoHandler = asignarPedidoHandler;
     }
 
     @Operation(
@@ -153,6 +159,55 @@ public class PedidoControladorRest {
 						estado,
 						pagina,
 						tamano
+				)
+		);
+	}
+
+	@Operation(
+			summary = "Asignarse un pedido",
+			description =
+				"Asigna el pedido al empleado autenticado "
+				+ "y cambia su estado a EN_PREPARACION"
+	)
+	@SecurityRequirement(name = "autenticacionBearer")
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "Pedido asignado correctamente"
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "Autenticación requerida"
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "Perfil incorrecto o pedido de otro restaurante"
+		),
+		@ApiResponse(
+			responseCode = "404",
+			description = "Pedido no encontrado"
+		),
+		@ApiResponse(
+			responseCode = "409",
+			description = "Pedido no asignable o modificado concurrentemente"
+		),
+		@ApiResponse(
+			responseCode = "502",
+			description = "Microservicio Usuarios no disponible"
+		)
+	})
+	@PatchMapping("/{pedidoId}/asignacion")
+	public ResponseEntity<PedidoRespuestaDto>
+			asignarPedido(
+					@PathVariable Long pedidoId,
+					@AuthenticationPrincipal
+					UsuarioAutenticado usuarioAutenticado) {
+
+		return ResponseEntity.ok(
+				asignarPedidoHandler.ejecutar(
+						pedidoId,
+						usuarioAutenticado.getUsuarioId(),
+						usuarioAutenticado.getToken()
 				)
 		);
 	}

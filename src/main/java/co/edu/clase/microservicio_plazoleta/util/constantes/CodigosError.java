@@ -38,6 +38,11 @@ public final class CodigosError {
     public static final String CANTIDAD_PLATO_INVALIDA = "PED-005";
     public static final String LIMITE_LINEAS_PEDIDO_EXCEDIDO = "PED-006";
     public static final String ESTADO_PEDIDO_OBLIGATORIO = "PED-007";
+    public static final String PEDIDO_NO_ENCONTRADO = "PED-008";
+    public static final String PEDIDO_NO_PERTENECE_RESTAURANTE = "PED-009";
+    public static final String PEDIDO_ESTADO_NO_ASIGNABLE = "PED-010";
+    public static final String PEDIDO_YA_ASIGNADO = "PED-011";
+    public static final String PEDIDO_MODIFICADO_CONCURRENTEMENTE = "PED-012";
 
     public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
     public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";

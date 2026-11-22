@@ -184,6 +184,24 @@ public final class MensajesError {
 
 	public static final String ESTADO_PEDIDO_OBLIGATORIO =
 			"El estado del pedido es obligatorio";
+
+	public static final String PEDIDO_NO_ENCONTRADO =
+			"El pedido solicitado no fue encontrado";
+
+	public static final String PEDIDO_NO_PERTENECE_RESTAURANTE =
+			"El pedido no pertenece al restaurante "
+					+ "del empleado autenticado";
+
+	public static final String PEDIDO_ESTADO_NO_ASIGNABLE =
+			"Solo se pueden asignar pedidos "
+					+ "en estado PENDIENTE";
+
+	public static final String PEDIDO_YA_ASIGNADO =
+			"El pedido ya fue asignado a un empleado";
+
+	public static final String
+			PEDIDO_MODIFICADO_CONCURRENTEMENTE =
+			"El pedido fue modificado por otro empleado";
 			
     private MensajesError() {
         throw new IllegalStateException(
