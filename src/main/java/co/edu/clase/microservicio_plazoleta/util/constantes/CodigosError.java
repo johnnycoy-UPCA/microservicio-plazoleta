@@ -37,12 +37,16 @@ public final class CodigosError {
     public static final String PLATO_REPETIDO = "PED-004";
     public static final String CANTIDAD_PLATO_INVALIDA = "PED-005";
     public static final String LIMITE_LINEAS_PEDIDO_EXCEDIDO = "PED-006";
+    public static final String ESTADO_PEDIDO_OBLIGATORIO = "PED-007";
 
     public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
     public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";
 
     public static final String EVENTO_NO_SERIALIZABLE = "OUT-001";
     public static final String EVENTO_PENDIENTE_NO_ENCONTRADO = "OUT-002";
+
+    public static final String EMPLEADO_NO_VALIDO = "EMP-001";
+    // public static final String SERVICIO_USUARIOS_NO_DISPONIBLE = "EMP-002";
 
     private CodigosError() {
         throw new IllegalStateException(

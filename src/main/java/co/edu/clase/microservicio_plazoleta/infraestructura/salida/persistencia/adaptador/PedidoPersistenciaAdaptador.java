@@ -1,11 +1,15 @@
 package co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.adaptador;
 
+import co.edu.clase.microservicio_plazoleta.dominio.modelo.Pagina;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Pedido;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.entidad.PedidoEntidad;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.mapeador.PedidoPersistenciaMapeador;
 import co.edu.clase.microservicio_plazoleta.infraestructura.salida.persistencia.repositorio.PedidoJpaRepositorio;
 import co.edu.clase.microservicio_plazoleta.util.enumeraciones.EstadoPedido;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,4 +70,36 @@ public class PedidoPersistenciaAdaptador
                 guardada
         );
     }
+
+	@Override
+	@Transactional(readOnly = true)
+	public Pagina<Pedido> listarPorRestauranteYEstado(
+			Long restauranteId,
+			EstadoPedido estado,
+			int pagina,
+			int tamano) {
+
+		Page<PedidoEntidad> resultado =
+				pedidoJpaRepositorio
+						.findByRestaurante_IdAndEstadoOrderByFechaCreacionAsc(
+								restauranteId,
+								estado,
+								PageRequest.of(pagina, tamano)
+						);
+
+		return new Pagina<>(
+				resultado.getContent()
+						.stream()
+						.map(
+								pedidoPersistenciaMapeador::aModelo
+						)
+						.toList(),
+				resultado.getNumber(),
+				resultado.getSize(),
+				resultado.getTotalElements(),
+				resultado.getTotalPages(),
+				resultado.isFirst(),
+				resultado.isLast()
+		);
+	}
 }

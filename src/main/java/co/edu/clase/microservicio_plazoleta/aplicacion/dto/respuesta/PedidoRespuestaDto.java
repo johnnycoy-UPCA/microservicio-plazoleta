@@ -10,6 +10,7 @@ public class PedidoRespuestaDto {
     private Long id;
     private Long clienteId;
     private Long restauranteId;
+    private Long empleadoAsignadoId;
     private EstadoPedido estado;
     private Long total;
     private List<DetallePedidoRespuestaDto> platos;
@@ -40,6 +41,17 @@ public class PedidoRespuestaDto {
 
     public void setRestauranteId(Long restauranteId) {
         this.restauranteId = restauranteId;
+    }
+
+    public Long getEmpleadoAsignadoId() {
+        return empleadoAsignadoId;
+    }
+
+    public void setEmpleadoAsignadoId(
+            Long empleadoAsignadoId) {
+
+        this.empleadoAsignadoId =
+                empleadoAsignadoId;
     }
 
     public EstadoPedido getEstado() {
