@@ -3,19 +3,24 @@ package co.edu.clase.microservicio_plazoleta.dominio.casouso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.excepcion.ExcepcionPlazoleta;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.DetallePedido;
+import co.edu.clase.microservicio_plazoleta.dominio.modelo.EventoPendiente;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.EventoTrazabilidad;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Pedido;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Plato;
 import co.edu.clase.microservicio_plazoleta.dominio.modelo.Restaurante;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoPendientePersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoSerializadorPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
-import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
+// import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
 import co.edu.clase.microservicio_plazoleta.util.constantes.CodigosError;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesValidacion;
 import co.edu.clase.microservicio_plazoleta.util.constantes.MensajesError;
 import co.edu.clase.microservicio_plazoleta.util.enumeraciones.CategoriaError;
+import co.edu.clase.microservicio_plazoleta.util.enumeraciones.EstadoEnvioEvento;
 import co.edu.clase.microservicio_plazoleta.util.enumeraciones.EstadoPedido;
+import co.edu.clase.microservicio_plazoleta.util.enumeraciones.TipoEvento;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -32,20 +37,26 @@ public class RealizarPedidoCasoUso
     private final PedidoPersistenciaPuerto pedidoPersistenciaPuerto;
     private final PlatoPersistenciaPuerto platoPersistenciaPuerto;
     private final RestaurantePersistenciaPuerto restaurantePersistenciaPuerto;
-	private final TrazabilidadRegistroPuerto trazabilidadRegistroPuerto;
+	// private final TrazabilidadRegistroPuerto trazabilidadRegistroPuerto;
+	private final EventoPendientePersistenciaPuerto eventoPendientePersistenciaPuerto;
+	private final EventoSerializadorPuerto eventoSerializadorPuerto;
     private final Clock reloj;
 
     public RealizarPedidoCasoUso(
             PedidoPersistenciaPuerto pedidoPersistenciaPuerto,
             PlatoPersistenciaPuerto platoPersistenciaPuerto,
             RestaurantePersistenciaPuerto restaurantePersistenciaPuerto,
-			TrazabilidadRegistroPuerto trazabilidadRegistroPuerto,
+			// TrazabilidadRegistroPuerto trazabilidadRegistroPuerto,
+			EventoPendientePersistenciaPuerto eventoPendientePersistenciaPuerto,
+			EventoSerializadorPuerto eventoSerializadorPuerto,
             Clock reloj) {
 
         this.pedidoPersistenciaPuerto = pedidoPersistenciaPuerto;
         this.platoPersistenciaPuerto = platoPersistenciaPuerto;
         this.restaurantePersistenciaPuerto = restaurantePersistenciaPuerto;
-		this.trazabilidadRegistroPuerto = trazabilidadRegistroPuerto;
+		// this.trazabilidadRegistroPuerto = trazabilidadRegistroPuerto;
+		this.eventoPendientePersistenciaPuerto = eventoPendientePersistenciaPuerto;
+		this.eventoSerializadorPuerto = eventoSerializadorPuerto;
         this.reloj = reloj;
     }
 
@@ -92,16 +103,18 @@ public class RealizarPedidoCasoUso
 		Pedido pedidoGuardado =
 				pedidoPersistenciaPuerto.guardar(pedido);
 
-		trazabilidadRegistroPuerto.registrar(
-				new EventoTrazabilidad(
-						pedidoGuardado.getId(),
-						pedidoGuardado.getClienteId(),
-						pedidoGuardado.getRestauranteId(),
-						null,
-						null,
-						EstadoPedido.PENDIENTE
-				)
-		);
+		// trazabilidadRegistroPuerto.registrar(
+		// 		new EventoTrazabilidad(
+		// 				pedidoGuardado.getId(),
+		// 				pedidoGuardado.getClienteId(),
+		// 				pedidoGuardado.getRestauranteId(),
+		// 				null,
+		// 				null,
+		// 				EstadoPedido.PENDIENTE
+		// 		)
+		// );
+
+		guardarEventoPendiente(pedidoGuardado);
 
 		return pedidoGuardado;
     }
@@ -313,4 +326,53 @@ public class RealizarPedidoCasoUso
 
         return platoIds;
     }
+
+	private void guardarEventoPendiente(
+			Pedido pedidoGuardado) {
+
+		EventoTrazabilidad eventoTrazabilidad =
+				new EventoTrazabilidad(
+						pedidoGuardado.getId(),
+						pedidoGuardado.getClienteId(),
+						pedidoGuardado.getRestauranteId(),
+						null,
+						null,
+						EstadoPedido.PENDIENTE
+				);
+
+		String cargaJson =
+				eventoSerializadorPuerto.serializar(
+						eventoTrazabilidad
+				);
+
+		Instant fechaActual = reloj.instant();
+
+		EventoPendiente eventoPendiente =
+				new EventoPendiente();
+
+		eventoPendiente.setTipoEvento(
+				TipoEvento.PEDIDO_CREADO
+		);
+		eventoPendiente.setAgregadoId(
+				pedidoGuardado.getId()
+		);
+		eventoPendiente.setCargaJson(cargaJson);
+		eventoPendiente.setEstadoEnvio(
+				EstadoEnvioEvento.PENDIENTE
+		);
+		eventoPendiente.setIntentos(0);
+		eventoPendiente.setProximoIntento(
+				fechaActual
+		);
+		eventoPendiente.setFechaCreacion(
+				fechaActual
+		);
+		eventoPendiente.setFechaEnvio(null);
+		eventoPendiente.setUltimoError(null);
+		eventoPendiente.setVersion(0L);
+
+		eventoPendientePersistenciaPuerto.guardar(
+				eventoPendiente
+		);
+	}
 }

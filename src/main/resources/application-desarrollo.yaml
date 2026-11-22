@@ -34,3 +34,8 @@ servicios:
 seguridad:
   jwt:
     secreto: ${JWT_SECRETO}
+
+outbox:
+  despachador:
+    intervalo-ms: 10000
+    demora-inicial-ms: 10000

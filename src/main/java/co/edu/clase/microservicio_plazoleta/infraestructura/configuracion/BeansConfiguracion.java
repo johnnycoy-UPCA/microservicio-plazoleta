@@ -10,24 +10,31 @@ import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCaso
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPlatosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ModificarPlatoServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.ProcesarEventoPendienteServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ValidarRestaurantePropietarioServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CambiarEstadoPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ModificarPlatoCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.ProcesarEventoPendienteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.RealizarPedidoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ValidarRestaurantePropietarioCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoPendientePersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoSerializadorPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
+// import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.Clock;
 
@@ -38,6 +45,13 @@ public class BeansConfiguracion {
     public Clock relojAplicacion() {
         return Clock.systemDefaultZone();
     }
+
+	@Bean
+	public ObjectMapper objectMapperAplicacion() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.findAndRegisterModules();
+		return objectMapper;
+	}
 
     @Bean("clienteUsuarios")
     public RestClient clienteUsuarios(
@@ -156,21 +170,21 @@ public class BeansConfiguracion {
 	@Bean
 	public RealizarPedidoServicioPuerto
 			realizarPedidoServicioPuerto(
-					PedidoPersistenciaPuerto
-						pedidoPersistenciaPuerto,
-					PlatoPersistenciaPuerto
-						platoPersistenciaPuerto,
-					RestaurantePersistenciaPuerto
-						restaurantePersistenciaPuerto,
-					TrazabilidadRegistroPuerto
-						trazabilidadRegistroPuerto,
+					PedidoPersistenciaPuerto pedidoPersistenciaPuerto,
+					PlatoPersistenciaPuerto platoPersistenciaPuerto,
+					RestaurantePersistenciaPuerto restaurantePersistenciaPuerto,
+					// TrazabilidadRegistroPuerto trazabilidadRegistroPuerto,
+					EventoPendientePersistenciaPuerto eventoPendientePersistenciaPuerto,
+					EventoSerializadorPuerto eventoSerializadorPuerto,
 					Clock relojAplicacion) {
 
 		return new RealizarPedidoCasoUso(
 			pedidoPersistenciaPuerto,
 			platoPersistenciaPuerto,
 			restaurantePersistenciaPuerto,
-			trazabilidadRegistroPuerto,
+			// trazabilidadRegistroPuerto,
+			eventoPendientePersistenciaPuerto,
+			eventoSerializadorPuerto,
 			relojAplicacion
 		);
 	}
@@ -182,5 +196,24 @@ public class BeansConfiguracion {
 		return RestClient.builder()
 				.baseUrl(propiedades.getUrlBase())
 				.build();
+	}
+
+	@Bean
+	public ProcesarEventoPendienteServicioPuerto
+			procesarEventoPendienteServicioPuerto(
+					EventoPendientePersistenciaPuerto
+							eventoPendientePersistenciaPuerto,
+					EventoSerializadorPuerto
+							eventoSerializadorPuerto,
+					TrazabilidadRegistroPuerto
+							trazabilidadRegistroPuerto,
+					Clock relojAplicacion) {
+
+		return new ProcesarEventoPendienteCasoUso(
+				eventoPendientePersistenciaPuerto,
+				eventoSerializadorPuerto,
+				trazabilidadRegistroPuerto,
+				relojAplicacion
+		);
 	}
 }

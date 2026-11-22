@@ -166,6 +166,13 @@ public final class MensajesError {
 
 	public static final String EVENTO_TRAZABILIDAD_RECHAZADO =
 			"El Microservicio Trazabilidad rechazó el evento";
+
+	public static final String EVENTO_NO_SERIALIZABLE =
+			"No fue posible preparar el evento "
+			+ "de trazabilidad";
+
+	public static final String EVENTO_PENDIENTE_NO_ENCONTRADO =
+			"El evento pendiente no fue encontrado";
 			
     private MensajesError() {
         throw new IllegalStateException(

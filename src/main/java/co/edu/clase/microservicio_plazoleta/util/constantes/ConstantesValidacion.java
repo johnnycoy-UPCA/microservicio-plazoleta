@@ -17,6 +17,10 @@ public final class ConstantesValidacion {
     public static final int CANTIDAD_MINIMA_PLATO_PEDIDO = 1;
     public static final int CANTIDAD_MAXIMA_PLATO_PEDIDO = 100;
     public static final int MAXIMO_LINEAS_PEDIDO = 50;
+    public static final int OUTBOX_TAMANO_LOTE = 20;
+    public static final int OUTBOX_MAXIMO_INTENTOS = 10;
+    public static final long OUTBOX_REINTENTO_BASE_SEGUNDOS = 10L;
+    public static final long OUTBOX_REINTENTO_MAXIMO_SEGUNDOS = 900L;
     
     public static final String EXPRESION_NIT = "^[0-9]+$";
     public static final String EXPRESION_CELULAR = "^\\+?[0-9]{1,12}$";

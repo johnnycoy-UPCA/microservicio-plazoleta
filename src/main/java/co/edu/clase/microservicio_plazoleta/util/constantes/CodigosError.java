@@ -41,6 +41,9 @@ public final class CodigosError {
     public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
     public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";
 
+    public static final String EVENTO_NO_SERIALIZABLE = "OUT-001";
+    public static final String EVENTO_PENDIENTE_NO_ENCONTRADO = "OUT-002";
+
     private CodigosError() {
         throw new IllegalStateException(
                 "No se permite crear instancias de una clase de constantes"
