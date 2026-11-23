@@ -2,8 +2,10 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.contro
 
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespuestaDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.EntregarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.EntregarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.MarcarPedidoListoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
@@ -40,17 +42,20 @@ public class PedidoControladorRest {
     private final ListarPedidosHandler listarPedidosHandler;
 	private final AsignarPedidoHandler asignarPedidoHandler;
 	private final MarcarPedidoListoHandler marcarPedidoListoHandler;
+	private final EntregarPedidoHandler entregarPedidoHandler;
 
     public PedidoControladorRest(
             RealizarPedidoHandler realizarPedidoHandler,
 			ListarPedidosHandler listarPedidosHandler,
 			AsignarPedidoHandler asignarPedidoHandler,
-			MarcarPedidoListoHandler marcarPedidoListoHandler) {
+			MarcarPedidoListoHandler marcarPedidoListoHandler,
+			EntregarPedidoHandler entregarPedidoHandler) {
 
         this.realizarPedidoHandler = realizarPedidoHandler;
 		this.listarPedidosHandler = listarPedidosHandler;
 		this.asignarPedidoHandler = asignarPedidoHandler;
 		this.marcarPedidoListoHandler = marcarPedidoListoHandler;
+		this.entregarPedidoHandler = entregarPedidoHandler;
     }
 
     @Operation(
@@ -235,6 +240,32 @@ public class PedidoControladorRest {
 						pedidoId,
 						usuarioAutenticado.getUsuarioId(),
 						usuarioAutenticado.getToken()
+				)
+		);
+	}
+
+	@Operation(
+		summary = "Entregar pedido",
+		description =
+			"Valida el PIN y cambia el pedido "
+			+ "de LISTO a ENTREGADO"
+	)
+	@SecurityRequirement(name = "autenticacionBearer")
+	@PatchMapping("/{pedidoId}/entrega")
+	public ResponseEntity<PedidoRespuestaDto>
+			entregarPedido(
+					@PathVariable Long pedidoId,
+					@Valid @RequestBody
+					EntregarPedidoSolicitudDto solicitud,
+					@AuthenticationPrincipal
+					UsuarioAutenticado usuarioAutenticado) {
+
+		return ResponseEntity.ok(
+				entregarPedidoHandler.ejecutar(
+						pedidoId,
+						usuarioAutenticado.getUsuarioId(),
+						usuarioAutenticado.getToken(),
+						solicitud.getPin()
 				)
 		);
 	}
