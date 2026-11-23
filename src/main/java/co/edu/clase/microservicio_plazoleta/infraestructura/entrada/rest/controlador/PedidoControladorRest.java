@@ -5,6 +5,7 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespu
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.MarcarPedidoListoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
 import co.edu.clase.microservicio_plazoleta.util.constantes.ConstantesApi;
@@ -38,15 +39,18 @@ public class PedidoControladorRest {
     private final RealizarPedidoHandler realizarPedidoHandler;
     private final ListarPedidosHandler listarPedidosHandler;
 	private final AsignarPedidoHandler asignarPedidoHandler;
+	private final MarcarPedidoListoHandler marcarPedidoListoHandler;
 
     public PedidoControladorRest(
             RealizarPedidoHandler realizarPedidoHandler,
 			ListarPedidosHandler listarPedidosHandler,
-			AsignarPedidoHandler asignarPedidoHandler) {
+			AsignarPedidoHandler asignarPedidoHandler,
+			MarcarPedidoListoHandler marcarPedidoListoHandler) {
 
         this.realizarPedidoHandler = realizarPedidoHandler;
 		this.listarPedidosHandler = listarPedidosHandler;
 		this.asignarPedidoHandler = asignarPedidoHandler;
+		this.marcarPedidoListoHandler = marcarPedidoListoHandler;
     }
 
     @Operation(
@@ -205,6 +209,29 @@ public class PedidoControladorRest {
 
 		return ResponseEntity.ok(
 				asignarPedidoHandler.ejecutar(
+						pedidoId,
+						usuarioAutenticado.getUsuarioId(),
+						usuarioAutenticado.getToken()
+				)
+		);
+	}
+
+	@Operation(
+			summary = "Marcar pedido listo",
+			description =
+				"Marca el pedido como LISTO y solicita "
+				+ "la notificación del PIN al cliente"
+	)
+	@SecurityRequirement(name = "autenticacionBearer")
+	@PatchMapping("/{pedidoId}/listo")
+	public ResponseEntity<PedidoRespuestaDto>
+			marcarPedidoListo(
+					@PathVariable Long pedidoId,
+					@AuthenticationPrincipal
+					UsuarioAutenticado usuarioAutenticado) {
+
+		return ResponseEntity.ok(
+				marcarPedidoListoHandler.ejecutar(
 						pedidoId,
 						usuarioAutenticado.getUsuarioId(),
 						usuarioAutenticado.getToken()

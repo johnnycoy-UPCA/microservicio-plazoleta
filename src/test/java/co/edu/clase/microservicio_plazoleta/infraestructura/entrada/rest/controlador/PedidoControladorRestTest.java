@@ -7,6 +7,7 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.DetallePedi
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.MarcarPedidoListoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.manejador.ManejadorGlobalExcepciones;
 import co.edu.clase.microservicio_plazoleta.infraestructura.entrada.rest.seguridad.UsuarioAutenticado;
@@ -52,6 +53,8 @@ class PedidoControladorRestTest {
 	private ListarPedidosHandler listarPedidosHandler;
 	@Mock
 	private AsignarPedidoHandler asignarPedidoHandler;
+	@Mock
+	private MarcarPedidoListoHandler marcarPedidoListoHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -62,7 +65,8 @@ class PedidoControladorRestTest {
                 new PedidoControladorRest(
                         realizarPedidoHandler,
 						listarPedidosHandler,
-						asignarPedidoHandler
+						asignarPedidoHandler,
+						marcarPedidoListoHandler
                 );
 
         LocalValidatorFactoryBean validador =
@@ -243,6 +247,53 @@ class PedidoControladorRestTest {
 						.value("EN_PREPARACION"));
 
 		verify(asignarPedidoHandler).ejecutar(
+				eq(100L),
+				eq(30L),
+				eq("token-empleado")
+		);
+	}
+
+	@Test
+	void debeMarcarPedidoListo()
+			throws Exception {
+
+		PedidoRespuestaDto respuesta =
+				crearRespuesta();
+
+		respuesta.setEmpleadoAsignadoId(30L);
+		respuesta.setEstado(EstadoPedido.LISTO);
+
+		when(marcarPedidoListoHandler.ejecutar(
+				eq(100L),
+				eq(30L),
+				eq("token-empleado")
+		)).thenReturn(respuesta);
+
+		mockMvc.perform(
+						patch(
+								ConstantesApi.API_PEDIDOS
+										+ "/100/listo"
+						)
+								.with(
+										autenticacionEmpleado()
+								)
+				)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id")
+						.value(100))
+				.andExpect(jsonPath("$.estado")
+						.value("LISTO"))
+				.andExpect(jsonPath(
+						"$.empleadoAsignadoId"
+				).value(30))
+				.andExpect(jsonPath("$.pinHash")
+						.doesNotExist())
+				.andExpect(jsonPath("$.pinGeneradoEn")
+						.doesNotExist())
+				.andExpect(jsonPath("$.pinExpiraEn")
+						.doesNotExist());
+
+		verify(marcarPedidoListoHandler).ejecutar(
 				eq(100L),
 				eq(30L),
 				eq("token-empleado")

@@ -26,14 +26,24 @@ spring:
 servicios:
   usuarios:
     url-base: ${USUARIOS_URL_BASE:http://localhost:8081}
+    api-key: ${USUARIOS_API_KEY}
 
   trazabilidad:
     url-base: ${TRAZABILIDAD_URL_BASE:http://localhost:8084}
     api-key: ${TRAZABILIDAD_API_KEY}
 
+  mensajeria:
+    url-base: ${MENSAJERIA_URL_BASE:http://localhost:8083}
+    api-key: ${MENSAJERIA_API_KEY}
+
 seguridad:
   jwt:
     secreto: ${JWT_SECRETO}
+
+  pin:
+    secreto: ${PIN_SECRETO}
+    duracion-minutos: ${PIN_DURACION_MINUTOS:30}
+    maximo-intentos: ${PIN_MAXIMO_INTENTOS:5}
 
 outbox:
   despachador:
