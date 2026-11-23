@@ -4,8 +4,10 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.DetallePedi
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PaginaRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespuestaDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.DetallePedidoSolicitudDto;
+import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.EntregarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.EntregarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.MarcarPedidoListoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.RealizarPedidoHandler;
@@ -55,6 +57,8 @@ class PedidoControladorRestTest {
 	private AsignarPedidoHandler asignarPedidoHandler;
 	@Mock
 	private MarcarPedidoListoHandler marcarPedidoListoHandler;
+	@Mock
+	private EntregarPedidoHandler entregarPedidoHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -66,7 +70,8 @@ class PedidoControladorRestTest {
                         realizarPedidoHandler,
 						listarPedidosHandler,
 						asignarPedidoHandler,
-						marcarPedidoListoHandler
+						marcarPedidoListoHandler,
+						entregarPedidoHandler
                 );
 
         LocalValidatorFactoryBean validador =
@@ -300,6 +305,68 @@ class PedidoControladorRestTest {
 		);
 	}
 
+	@Test
+	void debeEntregarPedidoConPinCorrecto()
+			throws Exception {
+
+		EntregarPedidoSolicitudDto solicitud =
+				new EntregarPedidoSolicitudDto();
+
+		solicitud.setPin("482193");
+
+		PedidoRespuestaDto respuesta =
+				crearRespuesta();
+
+		respuesta.setEmpleadoAsignadoId(30L);
+		respuesta.setEstado(
+				EstadoPedido.ENTREGADO
+		);
+
+		when(entregarPedidoHandler.ejecutar(
+				eq(100L),
+				eq(30L),
+				eq("token-empleado"),
+				eq("482193")
+		)).thenReturn(respuesta);
+
+		mockMvc.perform(
+						patch(
+								ConstantesApi.API_PEDIDOS
+										+ "/100/entrega"
+						)
+								.with(
+										autenticacionEmpleado()
+								)
+								.contentType(
+										MediaType
+												.APPLICATION_JSON
+								)
+								.content(
+										objectMapper
+												.writeValueAsString(
+														solicitud
+												)
+								)
+				)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id")
+						.value(100))
+				.andExpect(jsonPath("$.estado")
+						.value("ENTREGADO"))
+				.andExpect(jsonPath(
+						"$.empleadoAsignadoId"
+				).value(30))
+				.andExpect(jsonPath("$.pinHash")
+						.doesNotExist());
+
+		verify(entregarPedidoHandler).ejecutar(
+				eq(100L),
+				eq(30L),
+				eq("token-empleado"),
+				eq("482193")
+		);
+	}
+
     private RequestPostProcessor autenticacionCliente() {
         return solicitud -> {
             UsuarioAutenticado principal =
@@ -327,6 +394,41 @@ class PedidoControladorRestTest {
             return solicitud;
         };
     }
+
+	@Test
+	void debeRechazarPinConFormatoInvalido()
+			throws Exception {
+
+		EntregarPedidoSolicitudDto solicitud =
+				new EntregarPedidoSolicitudDto();
+
+		solicitud.setPin("12345");
+
+		mockMvc.perform(
+						patch(
+								ConstantesApi.API_PEDIDOS
+										+ "/100/entrega"
+						)
+								.with(
+										autenticacionEmpleado()
+								)
+								.contentType(
+										MediaType
+												.APPLICATION_JSON
+								)
+								.content(
+										objectMapper
+												.writeValueAsString(
+														solicitud
+												)
+								)
+				)
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.codigo")
+						.value("VAL-001"))
+				.andExpect(jsonPath("$.detalles.pin")
+						.exists());
+	}
 
     private RealizarPedidoSolicitudDto
             crearSolicitud() {

@@ -45,6 +45,7 @@ public final class CodigosError {
     public static final String PEDIDO_MODIFICADO_CONCURRENTEMENTE = "PED-012";
     public static final String PEDIDO_ESTADO_NO_PREPARABLE = "PED-013";
     public static final String EMPLEADO_NO_ASIGNADO_AL_PEDIDO = "PED-014";
+    public static final String PEDIDO_NO_LISTO = "PED-015";
 
     public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
     public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";
@@ -61,6 +62,12 @@ public final class CodigosError {
     public static final String NOTIFICACION_RECHAZADA = "NOT-002";
 
     public static final String PIN_NO_PROCESABLE = "PIN-001";
+    public static final String PIN_OBLIGATORIO = "PIN-002";
+    public static final String PIN_FORMATO_INVALIDO = "PIN-003";
+    public static final String PIN_NO_GENERADO = "PIN-004";
+    public static final String PIN_EXPIRADO = "PIN-005";
+    public static final String PIN_INVALIDO = "PIN-006";
+    public static final String PIN_INTENTOS_AGOTADOS = "PIN-007";
 
     private CodigosError() {
         throw new IllegalStateException(

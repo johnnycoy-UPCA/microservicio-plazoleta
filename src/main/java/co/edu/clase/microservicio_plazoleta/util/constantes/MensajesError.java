@@ -223,6 +223,29 @@ public final class MensajesError {
 
 	public static final String EMPLEADO_NO_ASIGNADO_AL_PEDIDO =
 			"El pedido no está asignado al empleado autenticado";
+
+	public static final String PEDIDO_NO_LISTO =
+			"Solo se pueden entregar pedidos "
+			+ "en estado LISTO";
+
+	public static final String PIN_OBLIGATORIO =
+			"El PIN de entrega es obligatorio";
+
+	public static final String PIN_FORMATO_INVALIDO =
+			"El PIN debe contener exactamente seis dígitos";
+
+	public static final String PIN_NO_GENERADO =
+			"El pedido no tiene un PIN de entrega válido";
+
+	public static final String PIN_EXPIRADO =
+			"El PIN de entrega ha expirado";
+
+	public static final String PIN_INVALIDO =
+			"El PIN de entrega no es válido";
+
+	public static final String PIN_INTENTOS_AGOTADOS =
+			"Se agotaron los intentos permitidos "
+			+ "para validar el PIN";
 			
     private MensajesError() {
         throw new IllegalStateException(
