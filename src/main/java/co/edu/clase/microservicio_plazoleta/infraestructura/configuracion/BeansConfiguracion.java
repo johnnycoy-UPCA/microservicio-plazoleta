@@ -7,11 +7,13 @@ import co.edu.clase.microservicio_plazoleta.dominio.api.CrearRestauranteServicio
 import co.edu.clase.microservicio_plazoleta.dominio.api.ListarPedidosServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ListarPlatosServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ListarRestaurantesServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.MarcarPedidoListoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPedidosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarPlatosCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ListarRestaurantesCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.MarcarPedidoListoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ModificarPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.ProcesarEventoPendienteServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPuerto;
@@ -24,13 +26,18 @@ import co.edu.clase.microservicio_plazoleta.dominio.casouso.ModificarPlatoCasoUs
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ProcesarEventoPendienteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.RealizarPedidoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ValidarRestaurantePropietarioCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.modelo.ConfiguracionPin;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.CategoriaPersistenciaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.ClienteContactoConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.EmpleadoConsultaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoPendientePersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.EventoSerializadorPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.GeneradorPinPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.NotificacionPedidoPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PedidoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PlatoPersistenciaPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.PropietarioConsultaPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.spi.ProtectorPinPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.RestaurantePersistenciaPuerto;
 // import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.spi.TrazabilidadRegistroPuerto;
@@ -254,6 +261,59 @@ public class BeansConfiguracion {
 				empleadoConsultaPuerto,
 				eventoPendientePersistenciaPuerto,
 				eventoSerializadorPuerto,
+				relojAplicacion
+		);
+	}
+
+	@Bean("clienteMensajeria")
+	public RestClient clienteMensajeria(
+			MensajeriaServicioPropiedades propiedades) {
+
+		return RestClient.builder()
+				.baseUrl(propiedades.getUrlBase())
+				.build();
+	}
+
+	@Bean
+	public ConfiguracionPin configuracionPin(
+			PinPropiedades propiedades) {
+
+		return new ConfiguracionPin(
+				propiedades.getDuracionMinutos(),
+				propiedades.getMaximoIntentos()
+		);
+	}
+
+	@Bean
+	public MarcarPedidoListoServicioPuerto
+			marcarPedidoListoServicioPuerto(
+					PedidoPersistenciaPuerto
+							pedidoPersistenciaPuerto,
+					EmpleadoConsultaPuerto
+							empleadoConsultaPuerto,
+					ClienteContactoConsultaPuerto
+							clienteContactoConsultaPuerto,
+					NotificacionPedidoPuerto
+							notificacionPedidoPuerto,
+					GeneradorPinPuerto generadorPinPuerto,
+					ProtectorPinPuerto protectorPinPuerto,
+					EventoSerializadorPuerto
+							eventoSerializadorPuerto,
+					EventoPendientePersistenciaPuerto
+							eventoPendientePersistenciaPuerto,
+					ConfiguracionPin configuracionPin,
+					Clock relojAplicacion) {
+
+		return new MarcarPedidoListoCasoUso(
+				pedidoPersistenciaPuerto,
+				empleadoConsultaPuerto,
+				clienteContactoConsultaPuerto,
+				notificacionPedidoPuerto,
+				generadorPinPuerto,
+				protectorPinPuerto,
+				eventoSerializadorPuerto,
+				eventoPendientePersistenciaPuerto,
+				configuracionPin,
 				relojAplicacion
 		);
 	}

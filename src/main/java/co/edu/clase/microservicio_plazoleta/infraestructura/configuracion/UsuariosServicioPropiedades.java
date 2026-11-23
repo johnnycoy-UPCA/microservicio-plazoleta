@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class UsuariosServicioPropiedades {
 
     private String urlBase;
+    private String apiKey;
 
     public String getUrlBase() {
         return urlBase;
@@ -15,5 +16,13 @@ public class UsuariosServicioPropiedades {
 
     public void setUrlBase(String urlBase) {
         this.urlBase = urlBase;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 }

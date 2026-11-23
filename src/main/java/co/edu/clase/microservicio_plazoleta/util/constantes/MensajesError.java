@@ -176,7 +176,7 @@ public final class MensajesError {
 
 	public static final String EMPLEADO_NO_VALIDO =
 			"El empleado no existe, está inactivo "
-					+ "o no tiene restaurante asociado";
+			+ "o no tiene restaurante asociado";
 
 	// public static final String SERVICIO_USUARIOS_NO_DISPONIBLE =
 	// 		"No fue posible validar el empleado "
@@ -190,11 +190,11 @@ public final class MensajesError {
 
 	public static final String PEDIDO_NO_PERTENECE_RESTAURANTE =
 			"El pedido no pertenece al restaurante "
-					+ "del empleado autenticado";
+			+ "del empleado autenticado";
 
 	public static final String PEDIDO_ESTADO_NO_ASIGNABLE =
 			"Solo se pueden asignar pedidos "
-					+ "en estado PENDIENTE";
+			+ "en estado PENDIENTE";
 
 	public static final String PEDIDO_YA_ASIGNADO =
 			"El pedido ya fue asignado a un empleado";
@@ -202,6 +202,27 @@ public final class MensajesError {
 	public static final String
 			PEDIDO_MODIFICADO_CONCURRENTEMENTE =
 			"El pedido fue modificado por otro empleado";
+
+	public static final String CONTACTO_CLIENTE_NO_DISPONIBLE =
+			"No fue posible obtener el contacto del cliente";
+
+	public static final String SERVICIO_MENSAJERIA_NO_DISPONIBLE =
+			"El Microservicio Mensajería "
+			+ "no se encuentra disponible";
+
+	public static final String NOTIFICACION_RECHAZADA =
+			"El Microservicio Mensajería "
+			+ "rechazó la notificación";
+
+	public static final String PIN_NO_PROCESABLE =
+			"No fue posible proteger el PIN de entrega";
+
+	public static final String PEDIDO_ESTADO_NO_PREPARABLE =
+			"Solo se pueden marcar como LISTO los pedidos "
+			+ "en estado EN_PREPARACION";
+
+	public static final String EMPLEADO_NO_ASIGNADO_AL_PEDIDO =
+			"El pedido no está asignado al empleado autenticado";
 			
     private MensajesError() {
         throw new IllegalStateException(

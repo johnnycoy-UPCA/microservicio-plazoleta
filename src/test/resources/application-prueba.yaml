@@ -22,11 +22,21 @@ spring:
 servicios:
   usuarios:
     url-base: http://localhost:8081
+    api-key: clave-interna-usuarios-prueba-2026
 
   trazabilidad:
     url-base: http://localhost:8084
-    api-key: clave-interna-prueba-2026
+    api-key: clave-interna-trazabilidad-prueba-2026
+
+  mensajeria:
+    url-base: http://localhost:8083
+    api-key: clave-interna-mensajeria-prueba-2026
 
 seguridad:
   jwt:
     secreto: MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTIzNDU2Nzg5MDE=
+
+  pin:
+    secreto: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+    duracion-minutos: 30
+    maximo-intentos: 5

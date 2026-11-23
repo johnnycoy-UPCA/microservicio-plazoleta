@@ -43,6 +43,8 @@ public final class CodigosError {
     public static final String PEDIDO_ESTADO_NO_ASIGNABLE = "PED-010";
     public static final String PEDIDO_YA_ASIGNADO = "PED-011";
     public static final String PEDIDO_MODIFICADO_CONCURRENTEMENTE = "PED-012";
+    public static final String PEDIDO_ESTADO_NO_PREPARABLE = "PED-013";
+    public static final String EMPLEADO_NO_ASIGNADO_AL_PEDIDO = "PED-014";
 
     public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
     public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";
@@ -52,6 +54,13 @@ public final class CodigosError {
 
     public static final String EMPLEADO_NO_VALIDO = "EMP-001";
     // public static final String SERVICIO_USUARIOS_NO_DISPONIBLE = "EMP-002";
+
+    public static final String CONTACTO_CLIENTE_NO_DISPONIBLE = "CLI-001";
+
+    public static final String SERVICIO_MENSAJERIA_NO_DISPONIBLE = "NOT-001";
+    public static final String NOTIFICACION_RECHAZADA = "NOT-002";
+
+    public static final String PIN_NO_PROCESABLE = "PIN-001";
 
     private CodigosError() {
         throw new IllegalStateException(
