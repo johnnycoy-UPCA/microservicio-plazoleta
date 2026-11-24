@@ -2,6 +2,7 @@ package co.edu.clase.microservicio_plazoleta.infraestructura.configuracion;
 
 import co.edu.clase.microservicio_plazoleta.dominio.api.AsignarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CambiarEstadoPlatoServicioPuerto;
+import co.edu.clase.microservicio_plazoleta.dominio.api.CancelarPedidoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearPlatoServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.CrearRestauranteServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.api.EntregarPedidoServicioPuerto;
@@ -22,6 +23,7 @@ import co.edu.clase.microservicio_plazoleta.dominio.api.RealizarPedidoServicioPu
 import co.edu.clase.microservicio_plazoleta.dominio.api.ValidarRestaurantePropietarioServicioPuerto;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.AsignarPedidoCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.CambiarEstadoPlatoCasoUso;
+import co.edu.clase.microservicio_plazoleta.dominio.casouso.CancelarPedidoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearPlatoCasoUso;
 // import co.edu.clase.microservicio_plazoleta.dominio.casouso.CrearRestauranteCasoUso;
 import co.edu.clase.microservicio_plazoleta.dominio.casouso.ModificarPlatoCasoUso;
@@ -345,4 +347,20 @@ public class BeansConfiguracion {
 				relojAplicacion
 		);
 	}
+
+    @Bean
+    public CancelarPedidoServicioPuerto
+            cancelarPedidoServicioPuerto(
+                    PedidoPersistenciaPuerto pedidoPersistenciaPuerto,
+                    EventoPendientePersistenciaPuerto eventoPendientePersistenciaPuerto,
+                    EventoSerializadorPuerto eventoSerializadorPuerto,
+                    Clock relojAplicacion) {
+
+        return new CancelarPedidoCasoUso(
+                pedidoPersistenciaPuerto,
+                eventoPendientePersistenciaPuerto,
+                eventoSerializadorPuerto,
+                relojAplicacion
+        );
+    }
 }

@@ -46,6 +46,9 @@ public final class CodigosError {
     public static final String PEDIDO_ESTADO_NO_PREPARABLE = "PED-013";
     public static final String EMPLEADO_NO_ASIGNADO_AL_PEDIDO = "PED-014";
     public static final String PEDIDO_NO_LISTO = "PED-015";
+    public static final String PEDIDO_NO_CANCELABLE = "PED-016";
+    public static final String PEDIDO_NO_PERTENECE_CLIENTE = "PED-017";
+
 
     public static final String TRAZABILIDAD_NO_DISPONIBLE = "TRZ-001";
     public static final String EVENTO_TRAZABILIDAD_RECHAZADO = "TRZ-002";

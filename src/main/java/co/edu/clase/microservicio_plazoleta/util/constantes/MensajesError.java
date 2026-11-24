@@ -246,6 +246,13 @@ public final class MensajesError {
 	public static final String PIN_INTENTOS_AGOTADOS =
 			"Se agotaron los intentos permitidos "
 			+ "para validar el PIN";
+
+    public static final String PEDIDO_NO_CANCELABLE =
+            "Lo sentimos, tu pedido se encuentra en estado %s y no puede cancelarse";
+
+    public static final String PEDIDO_NO_PERTENECE_CLIENTE =
+            "El pedido no pertenece al cliente autenticado";
+
 			
     private MensajesError() {
         throw new IllegalStateException(
