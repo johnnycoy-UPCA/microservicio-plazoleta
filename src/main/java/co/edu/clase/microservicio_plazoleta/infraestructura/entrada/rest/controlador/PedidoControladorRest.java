@@ -5,6 +5,7 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.respuesta.PedidoRespu
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.EntregarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CancelarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.EntregarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.MarcarPedidoListoHandler;
@@ -43,19 +44,22 @@ public class PedidoControladorRest {
 	private final AsignarPedidoHandler asignarPedidoHandler;
 	private final MarcarPedidoListoHandler marcarPedidoListoHandler;
 	private final EntregarPedidoHandler entregarPedidoHandler;
+	private final CancelarPedidoHandler cancelarPedidoHandler;
 
     public PedidoControladorRest(
             RealizarPedidoHandler realizarPedidoHandler,
 			ListarPedidosHandler listarPedidosHandler,
 			AsignarPedidoHandler asignarPedidoHandler,
 			MarcarPedidoListoHandler marcarPedidoListoHandler,
-			EntregarPedidoHandler entregarPedidoHandler) {
+			EntregarPedidoHandler entregarPedidoHandler,
+			CancelarPedidoHandler cancelarPedidoHandler) {
 
         this.realizarPedidoHandler = realizarPedidoHandler;
 		this.listarPedidosHandler = listarPedidosHandler;
 		this.asignarPedidoHandler = asignarPedidoHandler;
 		this.marcarPedidoListoHandler = marcarPedidoListoHandler;
 		this.entregarPedidoHandler = entregarPedidoHandler;
+		this.cancelarPedidoHandler = cancelarPedidoHandler;
     }
 
     @Operation(
@@ -269,4 +273,52 @@ public class PedidoControladorRest {
 				)
 		);
 	}
+
+    @Operation(
+            summary = "Cancelar pedido",
+            description =
+                "Permite al cliente cancelar un pedido propio "
+                + "únicamente mientras se encuentre en estado PENDIENTE"
+    )
+    @SecurityRequirement(name = "autenticacionBearer")
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "Pedido cancelado correctamente"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Token ausente, inválido o expirado"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "Perfil incorrecto o el pedido pertenece a otro cliente"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Pedido no encontrado"
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "El pedido no está en estado PENDIENTE o fue modificado concurrentemente"
+        ),
+		@ApiResponse(
+			responseCode = "500",
+			description = "Error interno del microservicio"
+		)
+    })
+    @PatchMapping("/{pedidoId}/cancelacion")
+    public ResponseEntity<PedidoRespuestaDto>
+            cancelarPedido(
+                    @PathVariable Long pedidoId,
+                    @AuthenticationPrincipal
+                    UsuarioAutenticado usuarioAutenticado) {
+
+        return ResponseEntity.ok(
+                cancelarPedidoHandler.ejecutar(
+                        pedidoId,
+                        usuarioAutenticado.getUsuarioId()
+                )
+        );
+    }
 }

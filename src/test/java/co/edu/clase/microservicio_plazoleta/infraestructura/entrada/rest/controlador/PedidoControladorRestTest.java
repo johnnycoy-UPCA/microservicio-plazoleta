@@ -7,6 +7,7 @@ import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.DetallePedi
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.EntregarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.dto.solicitud.RealizarPedidoSolicitudDto;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.AsignarPedidoHandler;
+import co.edu.clase.microservicio_plazoleta.aplicacion.handler.CancelarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.EntregarPedidoHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.ListarPedidosHandler;
 import co.edu.clase.microservicio_plazoleta.aplicacion.handler.MarcarPedidoListoHandler;
@@ -59,6 +60,8 @@ class PedidoControladorRestTest {
 	private MarcarPedidoListoHandler marcarPedidoListoHandler;
 	@Mock
 	private EntregarPedidoHandler entregarPedidoHandler;
+	@Mock
+	private CancelarPedidoHandler cancelarPedidoHandler;
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -71,7 +74,8 @@ class PedidoControladorRestTest {
 						listarPedidosHandler,
 						asignarPedidoHandler,
 						marcarPedidoListoHandler,
-						entregarPedidoHandler
+						entregarPedidoHandler,
+						cancelarPedidoHandler
                 );
 
         LocalValidatorFactoryBean validador =
@@ -366,6 +370,33 @@ class PedidoControladorRestTest {
 				eq("482193")
 		);
 	}
+
+    @Test
+    void debeCancelarPedidoYResponderCorrectamente()
+            throws Exception {
+
+        PedidoRespuestaDto respuesta = crearRespuesta();
+        respuesta.setEstado(EstadoPedido.CANCELADO);
+
+        when(cancelarPedidoHandler.ejecutar(
+                eq(100L),
+                eq(20L)
+        )).thenReturn(respuesta);
+
+        mockMvc.perform(
+                        patch(ConstantesApi.API_PEDIDOS + "/100/cancelacion")
+                                .with(autenticacionCliente())
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(100))
+                .andExpect(jsonPath("$.clienteId").value(20))
+                .andExpect(jsonPath("$.estado").value("CANCELADO"));
+
+        verify(cancelarPedidoHandler).ejecutar(
+                eq(100L),
+                eq(20L)
+        );
+    }
 
     private RequestPostProcessor autenticacionCliente() {
         return solicitud -> {
